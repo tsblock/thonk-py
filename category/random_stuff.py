@@ -55,17 +55,18 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         params = {"title": queried_song}
         req = await httpx.get("https://some-random-api.ml/lyrics", params=params)
         res = req.json()
-        # if res["error"] is not None:
-        #     await ctx.channel.send(embed=funcs.errorEmbed(None, "Song doesn't exist."))
-        title = res["title"]
-        author = res["author"]
-        lyrics = res["lyrics"][:2048]
-        lyricEmbed = discord.Embed(
-            color=discord.Color.green(),
-            description=lyrics,
-            title="{} - {}".format(author, title)
-        )
-        await ctx.channel.send(embed=lyricEmbed)
+        if res["error"] is not None:
+            await ctx.channel.send(embed=funcs.errorEmbed(None, "Song doesn't exist."))
+        else:
+            title = res["title"]
+            author = res["author"]
+            lyrics = res["lyrics"][:2048]
+            lyricEmbed = discord.Embed(
+                color=discord.Color.green(),
+                description=lyrics,
+                title="{} - {}".format(author, title)
+            )
+            await ctx.channel.send(embed=lyricEmbed)
 
 
 
