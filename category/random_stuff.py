@@ -49,26 +49,6 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         file = await funcs.get_image_from_url(str(res["link"]))
         await ctx.channel.send(file=file)
 
-    @commands.cooldown(1, 10, commands.BucketType.default)
-    @commands.command(name="lyric", description="Search a song's lyric")
-    async def lyric(self, ctx, *, queried_song):
-        params = {"title": queried_song}
-        req = await httpx.get("https://some-random-api.ml/lyrics", params=params)
-        res = req.json()
-        if res["error"] is not None:
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "Song doesn't exist."))
-        else:
-            title = res["title"]
-            author = res["author"]
-            lyrics = res["lyrics"][:2048]
-            lyricEmbed = discord.Embed(
-                color=discord.Color.green(),
-                description=lyrics,
-                title="{} - {}".format(author, title)
-            )
-            await ctx.channel.send(embed=lyricEmbed)
-
-
 
 def setup(client):
     client.add_cog(RandomStuff(client))
