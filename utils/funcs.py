@@ -1,7 +1,7 @@
 import discord
 from utils.emotes import emotes
-import aiohttp
-import io
+import httpx
+from io import BytesIO
 
 
 def errorEmbed(error_title, message):
@@ -16,16 +16,15 @@ def errorEmbed(error_title, message):
 
 
 async def simple_get_request(url):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as r:
-            if r.status == 200:
-                return await r.json()
+    r = await httpx.get(url)
+    if r.status_code == 200:
+        return r.json()
 
 
 async def get_image_from_url(url):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as res:
-            if res.status != 200:
-                return None
-            data = io.BytesIO(await res.read())
-            return discord.File(data, "abcd.png")
+    r = await httpx.get(url)
+    if r.status_code != 200:
+        return None
+    data = BytesIO(r.content)
+    return discord.File(data, "aaa." + url[-3:])
+

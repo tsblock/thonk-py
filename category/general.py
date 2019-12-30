@@ -5,7 +5,7 @@ from utils.emotes import emotes
 from discord.ext import commands
 
 
-class General(commands.Cog):
+class General(commands.Cog, name="General"):
     def __init__(self, client):
         self.client = client
 
@@ -25,7 +25,8 @@ class General(commands.Cog):
             )
             listEmbed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
             for cogs in self.client.cogs:  # loop through each category
-                if cogs == "Cleverbot": continue
+                if len(self.client.get_cog(cogs).get_commands()) == 0:  # hacky hack to skip handlers
+                    continue
                 cmd_list = ""
                 for cmd_name in self.client.get_cog(cogs).get_commands():
                     cmd_list += "`{}`\n".format(cmd_name)
@@ -59,7 +60,8 @@ class General(commands.Cog):
     @commands.command(name="invite", description="Shows the invite of this bot")
     async def invite(self, ctx):
         invite_embed = discord.Embed(
-            description="[Click here!](https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=473196598&scope=bot)".format(self.client.user.id),
+            description="[Click here!](https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=473196598&scope=bot)".format(
+                self.client.user.id),
             color=discord.Color.from_rgb(255, 255, 0)
         )
         await ctx.channel.send(embed=invite_embed)
