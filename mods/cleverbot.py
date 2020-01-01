@@ -12,9 +12,10 @@ class Cleverbot(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.client.user in message.mentions and not message.content.startswith("t."):
-            async with message.channel.typing():
-                msg = re.sub('<@!?' + str(self.client.user.id) + '>', '', message.content).strip()
-                await message.channel.send(message.author.mention + " " + cb.single_exchange(msg))
+            if message.channel.id == 661589807901704222 and message.author.bot:
+                async with message.channel.typing():
+                    msg = re.sub("<@!?" + str(self.client.user.id) + ">", "", message.content).strip()
+                    await message.channel.send(message.author.mention + " " + cb.single_exchange(msg))
 
 
 def setup(client):
