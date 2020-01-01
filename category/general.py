@@ -9,7 +9,8 @@ class General(commands.Cog, name="General"):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="ping", description="Shows latency of the bot, also for checking if the bot is responding")
+    @commands.command(name="ping",
+                      description="Shows latency of the bot, also for checking if the bot is responding")
     async def ping(self, ctx):
         previous_time = int(round(time.time() * 1000))
         msg = await ctx.channel.send(emotes["thonkspin"])
@@ -17,7 +18,7 @@ class General(commands.Cog, name="General"):
         delta = current_time - previous_time
         await msg.edit(content="{} `{}ms`".format(emotes["thonk"], delta))
 
-    @commands.command(name="help", description="Shows a list of command")
+    @commands.command(name="help", description="Shows a list of command", usage="[command]")
     async def help(self, ctx, *cmd):
         if not cmd:  # no command specified
             listEmbed = discord.Embed(
@@ -41,7 +42,8 @@ class General(commands.Cog, name="General"):
                 aliases = cmd_object.aliases
                 cmdEmbed = discord.Embed(
                     color=discord.Color.from_rgb(255, 255, 0),
-                    title=name
+                    title=name,
+                    description="<> = Required, [] = Optional"
                 )
                 cmdEmbed.add_field(name="Description", value="```{}```".format(description))
                 if usage is not None:

@@ -37,20 +37,13 @@ class Administrator(commands.Cog, name="Administrator"):
             'emotes': emotes
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
-        try:
-            result = (await eval(f"{fn_name}()", env))
-            successEmbed = discord.Embed(
-                title="{} Code executed successfully".format(emotes.emotes["tick"]),
-                color=discord.Color.green(),
-                description="```xl\n{}```".format(result)
-            )
-            await ctx.channel.send(embed=successEmbed)
-        except Exception as err:
-            failedEmbed = discord.Embed(
-                title="{} Code failed successfully".format(emotes.emotes["cross"]),
-                color=discord.Color.red(),
-                description="```xl\n{}```".format(str(err))
-            )
+        result = (await eval(f"{fn_name}()", env))
+        successEmbed = discord.Embed(
+            title="{} Code executed successfully".format(emotes.emotes["tick"]),
+            color=discord.Color.green(),
+            description="```xl\n{}```".format(result)
+        )
+        await ctx.channel.send(embed=successEmbed)
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()
