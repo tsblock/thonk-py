@@ -28,3 +28,6 @@ async def get_image_from_url(url):
     data = BytesIO(r.content)
     return discord.File(data, "aaa." + url[-3:])
 
+def number_emojis():
+    return ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
+

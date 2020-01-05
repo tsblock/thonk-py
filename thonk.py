@@ -1,11 +1,13 @@
 import os
-from utils import funcs
 import discord
 from discord.ext import commands
 
 import config
 
-client = commands.Bot(command_prefix="t.")
+prefix = "t."
+if not config.production:
+    prefix = "tb."
+client = commands.Bot(command_prefix=prefix)
 client.remove_command("help")
 
 
@@ -16,6 +18,7 @@ async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=presence)
     if config.production:
         await client.get_channel(661589807901704222).send("<@659739607365320725> i hate you so much")
+
 
 for file in os.listdir("./category"):
     if file.endswith(".py"):

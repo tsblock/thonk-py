@@ -17,33 +17,59 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
     def _get_game_from_list(self, channel_id: int):
         return self.game_list[channel_id]
 
-    @commands.command(name="ttt_start", description="Start a tic tac toe game", usage="<@mention>")
+    @commands.command(name="ttt_start", description="Start a tic tac toe game", usage="<@mention>", aliases=["tstart"])
     @commands.guild_only()
     async def start(self, ctx, target_player: discord.Member):
         player1 = ctx.message.author.id
         player2 = target_player.id
-        if self.check_channel_has_game(ctx):
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "This channel still has a tic tac toe game going! "
-                                                                "Please wait until it ends."))
-        elif target_player.bot:
+
+        if target_player.bot:
             await ctx.channel.send(embed=funcs.errorEmbed(None, "You can't start a game with bots."))
         elif player1 == player2:
             await ctx.channel.send(embed=funcs.errorEmbed(None, "You can't start a game with yourself..."))
+        elif ctx.channel.id in self.game_list:
+            await ctx.channel.send(embed=funcs.errorEmbed(None, "This channel still has a tic tac toe game going! "
+                                                                "Please wait until it ends."))
         else:
-            # let's do the messy stuff
-            inital_game_board_embed = discord.Embed(
+            initial_game_board_embed = discord.Embed(
                 color=discord.Color.blue(),
-                title="{} vs {}".format(ctx.message.author.mention, target_player.mention),
+                title="{} vs {}".format(ctx.message.author.name, target_player.name),
             )
             self.game_list[ctx.channel.id] = TictactoeGame(player1, player2)  # add a instance of a game to game list
-            inital_game_board_embed.description = str(self._get_game_from_list(ctx.channel.id))
-            game_msg = await ctx.channel.send(embed=inital_game_board_embed)
+            initial_game_board_embed.description = str(self._get_game_from_list(ctx.channel.id))
+            game_msg = await ctx.channel.send("{}'s turn".format(ctx.message.author.name),
+                                              embed=initial_game_board_embed)
+            for reactions in funcs.number_emojis():
+                await game_msg.add_reaction(reactions)
+            self.game_list[ctx.channel.id].msg_id = game_msg.id
 
-    @commands.command(name="c")
-    @commands.guild_only()
-    async def clear(self, ctx):
-        self.game_list = {}
-        await ctx.channel.send("cleared")
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        message = reaction.message
+        if message.channel.id in self.game_list:
+            if self.game_list[message.channel.id].turn == user.id:
+                index = funcs.number_emojis().index(reaction.emoji)
+                if self.game_list[message.channel.id][index] == "🔲":
+                    self.game_list[message.channel.id].place(index)
+                    if self.game_list[message.channel.id].check_for_win():
+                        await message.delete()
+                        await message.channel.send("{} wins! Congratulations. :tada:".format(
+                            self.client.get_user(self.game_list[message.channel.id].winner).mention))
+                        self.game_list.pop(message.channel.id, None)
+                    elif self.game_list[message.channel.id].check_for_draw():
+                        await message.delete()
+                        await message.channel.send("It's a draw!")
+                        self.game_list.pop(message.channel.id, None)
+                    else:
+                        updated_game_board_embed = message.embeds[0]
+                        updated_game_board_embed.description = str(self.game_list[message.channel.id])
+                        await message.edit(
+                            content="{}'s turn".format(
+                                self.client.get_user(self.game_list[message.channel.id].turn).name),
+                            embed=updated_game_board_embed)
+                        await reaction.remove(user)
+            elif user.id != self.client.user.id:
+                await reaction.remove(user)
 
 
 def setup(client):

@@ -18,7 +18,7 @@ class General(commands.Cog, name="General"):
         delta = current_time - previous_time
         await msg.edit(content="{} `{}ms`".format(emotes["thonk"], delta))
 
-    @commands.command(name="help", description="Shows a list of command", usage="[command]")
+    @commands.command(name="help", description="Shows a list of command", usage="[command]", aliases=["cmds", "h"])
     async def help(self, ctx, *cmd):
         if not cmd:  # no command specified
             listEmbed = discord.Embed(
