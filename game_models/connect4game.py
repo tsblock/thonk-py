@@ -43,5 +43,5 @@ class Connect4Game:
 
         for line in chain(*lines):
             for color, group in groupby(line):
-                if color != NONE and len(list(group)) >= self.win:
+                if color != EMPTY and len(list(group)) >= 4:
                     return color
