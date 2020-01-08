@@ -1,8 +1,8 @@
 import discord
-from utils.tictactoe_game import TictactoeGame
-from utils import funcs
 from discord.ext import commands
-from discord.ext import tasks
+
+from utils import funcs
+from utils.tictactoe_game import TictactoeGame
 
 
 class Tictactoe(commands.Cog, name="Tic tac toe"):
@@ -54,7 +54,7 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
                     await message.delete()
                     await message.channel.send("Game cancelled!")
                 else:
-                    await reaction.remove()
+                    await reaction.remove(user)
             else:
                 if self.game_list[message.channel.id].turn == user.id:
                     index = funcs.number_emojis().index(reaction.emoji)

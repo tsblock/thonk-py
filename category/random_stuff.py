@@ -1,7 +1,8 @@
-from discord.ext import commands
-from utils import funcs
-import httpx
 import discord
+import httpx
+from discord.ext import commands
+
+from utils import funcs
 
 
 class RandomStuff(commands.Cog, name="Random stuff"):
@@ -48,6 +49,34 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         res = await funcs.simple_get_request("https://some-random-api.ml/img/birb")
         file = await funcs.get_image_from_url(str(res["link"]))
         await ctx.channel.send(file=file)
+
+    @commands.cooldown(1, 5, commands.BucketType.default)
+    @commands.command(name="urban", description="Urban Dictionary, but in Discord.", usage="<term>")
+    async def urban(self, ctx, *, term):
+        params = {"term": term}
+        res = await httpx.get("https://api.urbandictionary.com/v0/define", params=params)
+        data = res.json()["list"]
+        await ctx.trigger_typing()
+        if len(data) == 0:
+            await ctx.channel.send(embed=funcs.errorEmbed(None, "Term does not exist."))
+        else:
+            urban_embed = discord.Embed(
+                color=discord.Color.from_rgb(255, 255, 0),
+                title=term
+            )
+            definition = data[0]["definition"].replace("[", "").replace("]", "")
+            example = data[0]["example"].replace("[", "").replace("]", "")
+            thumbs_up = data[0]["thumbs_up"]
+            thumbs_down = data[0]["thumbs_down"]
+            author = data[0]["author"]
+            urban_embed.add_field(name="Definition", value=definition)
+            if example:
+                urban_embed.add_field(name="Example", value=example)
+            urban_embed.set_footer(text="👍 {} | 👎 {} | By: {}".format(str(thumbs_up), str(thumbs_down), author))
+            msg = await ctx.channel.send(embed=urban_embed)
+            await msg.add_reaction("◀")
+            await msg.add_reaction("▶")
+            await msg.add_reaction("⏹")
 
 
 def setup(client):
