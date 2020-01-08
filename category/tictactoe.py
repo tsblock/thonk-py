@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 
+from game_models.tictactoe_game import TictactoeGame
 from utils import funcs
-from utils.tictactoe_game import TictactoeGame
 
 
 class Tictactoe(commands.Cog, name="Tic tac toe"):
@@ -81,6 +81,7 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
                         await reaction.remove(user)
                 elif user.id != self.client.user.id:
                     await reaction.remove(user)
+
 
 def setup(client):
     client.add_cog(Tictactoe(client))

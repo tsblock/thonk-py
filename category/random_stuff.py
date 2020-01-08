@@ -74,9 +74,9 @@ class RandomStuff(commands.Cog, name="Random stuff"):
                 urban_embed.add_field(name="Example", value=example)
             urban_embed.set_footer(text="👍 {} | 👎 {} | By: {}".format(str(thumbs_up), str(thumbs_down), author))
             msg = await ctx.channel.send(embed=urban_embed)
-            await msg.add_reaction("◀")
-            await msg.add_reaction("▶")
-            await msg.add_reaction("⏹")
+            # await msg.add_reaction("◀")
+            # await msg.add_reaction("▶")
+            # await msg.add_reaction("⏹")
 
 
 def setup(client):
