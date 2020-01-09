@@ -42,7 +42,6 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
             for reactions in funcs.number_emojis():
                 await game_msg.add_reaction(reactions)
             await game_msg.add_reaction("⛔")
-            self.game_list[ctx.channel.id].msg_id = game_msg.id
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):

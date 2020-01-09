@@ -1,5 +1,7 @@
 from itertools import groupby, chain
 
+from utils import funcs
+
 EMPTY = "🔲"
 RED = "🔴"
 BLUE = "🔵"
@@ -21,6 +23,7 @@ class Connect4Game:
     def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
+        self.turn = player1
         self.board = [[EMPTY] * 6 for _ in range(7)]
         self.winner = None
 
@@ -45,3 +48,9 @@ class Connect4Game:
             for color, group in groupby(line):
                 if color != EMPTY and len(list(group)) >= 4:
                     return color
+
+    def __str__(self):
+        board_str = " ".join(map(lambda x: funcs.number_emojis()[x - 1], range(1, 8))) + "\n"
+        for y in range(6):
+            board_str += " ".join(str(self.board[x][y]) for x in range(7)) + "\n"
+        return board_str

@@ -9,7 +9,6 @@ class TictactoeGame():
         self.player2 = player2
         self.turn = player1  # first turn is the player who starts it oof
         self.winner = None
-        self.msg_id = None
 
     def __getitem__(self, index):
         return self.board[index // 3][index % 3]
