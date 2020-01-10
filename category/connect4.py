@@ -52,8 +52,8 @@ class Connect4(commands.Cog, name="Connect 4"):
         if user.bot:
             return
         if message.channel.id in self.game_list:
-            if user.id == self.game_list[message.channel.id].player1 or user.id == self.game_list[
-                message.channel.id].player2:
+            if user.id == self.game_list[message.channel.id].player1 \
+                    or user.id == self.game_list[message.channel.id].player2:
                 if reaction.emoji == "⛔":
                     self.game_list.pop(channel_id, None)
                     await message.delete()
