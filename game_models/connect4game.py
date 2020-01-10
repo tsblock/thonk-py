@@ -4,7 +4,7 @@ from utils import funcs
 
 EMPTY = "🔲"
 RED = "🔴"
-BLUE = "🔵"
+YELLOW = "🟡"
 
 
 def diagonalsPos(matrix, cols, rows):
@@ -28,12 +28,16 @@ class Connect4Game:
         self.winner = None
 
     def place(self, column, color):
-        if self.board[0] != EMPTY:
+        if self.board[column][0] != EMPTY:
             return False  # return false if column is full
         i = -1
-        while self.board[i] != EMPTY:
+        while self.board[column][i] != EMPTY:
             i -= 1
-        self.board[i] = color
+        self.board[column][i] = color
+        if self.turn == self.player1:
+            self.turn = self.player2
+        else:
+            self.turn = self.player1
         return True
 
     def getWinner(self):
@@ -47,7 +51,25 @@ class Connect4Game:
         for line in chain(*lines):
             for color, group in groupby(line):
                 if color != EMPTY and len(list(group)) >= 4:
-                    return color
+                    if color == RED:
+                        return self.player1
+                    else:
+                        return self.player2
+        return False
+
+    def checkDraw(self):
+        result = True
+        for columns in self.board:
+            for item in columns:
+                if item == EMPTY:
+                    result = False
+        return result
+
+    def getColorFromPlayer(self, player):
+        if player == self.player1:
+            return RED
+        else:
+            return YELLOW
 
     def __str__(self):
         board_str = " ".join(map(lambda x: funcs.number_emojis()[x - 1], range(1, 8))) + "\n"

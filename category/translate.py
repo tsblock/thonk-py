@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from googletrans import Translator
 from googletrans import constants
+
 from utils import funcs
 
 
@@ -24,13 +25,13 @@ class Translate(commands.Cog, name="Google Translate"):
                                                   "https://github.com/ssut/py-googletrans/blob/master/googletrans"
                                                   "/constants.py for the list of valid language code."))
         else:
-            async with ctx.typing():
-                res = self.translator.translate(msg, dest=dest)
-                translate_embed = discord.Embed(
-                    color=discord.Color.green(),
-                    description="`{}`".format(res.text)
-                )
-                await ctx.channel.send(embed=translate_embed)
+            await ctx.trigger_typing()
+            res = self.translator.translate(msg, dest=dest)
+            translate_embed = discord.Embed(
+                color=discord.Color.green(),
+                description="`{}`".format(res.text)
+            )
+            await ctx.channel.send(embed=translate_embed)
 
     @commands.command(name="literalchinese",
                       description="Literally translates Chinese text to English,"
@@ -41,15 +42,15 @@ class Translate(commands.Cog, name="Google Translate"):
     async def literal_chinese(self, ctx, *, msg):
         msg_list = list(msg)
         res = ""
-        async with ctx.typing():
-            translated_text_list = self.translator.translate(msg_list, dest="en")
-            for translated_text in translated_text_list:
-                res += "{} ".format(translated_text.text)
-            translate_embed = discord.Embed(
-                color=discord.Color.green(),
-                description="`{}`".format(res)
-            )
-            await ctx.channel.send(embed=translate_embed)
+        await ctx.trigger_typing()
+        translated_text_list = self.translator.translate(msg_list, dest="en")
+        for translated_text in translated_text_list:
+            res += "{} ".format(translated_text.text)
+        translate_embed = discord.Embed(
+            color=discord.Color.green(),
+            description="`{}`".format(res)
+        )
+        await ctx.channel.send(embed=translate_embed)
 
 
 def setup(client):

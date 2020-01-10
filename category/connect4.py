@@ -17,7 +17,8 @@ class Connect4(commands.Cog, name="Connect 4"):
     def _get_game_from_list(self, channel_id: int):
         return self.game_list[channel_id]
 
-    @commands.command(name="c4_start", description="Start a connect 4 game", usage="<@mention>", aliases=["cstart"])
+    @commands.command(name="c4_start", description="Start a connect 4 game", usage="<@mention>",
+                      aliases=["cstart", "c4"])
     @commands.guild_only()
     async def c4_start(self, ctx, target_player: discord.Member):
         player1 = ctx.message.author.id
@@ -43,26 +44,51 @@ class Connect4(commands.Cog, name="Connect 4"):
                 await game_msg.add_reaction(funcs.number_emojis()[num])
             await game_msg.add_reaction("⛔")
 
-    @commands.command(name="c")
-    async def c(self, ctx):
-        self.game_list[ctx.channel.id] = None
-        await ctx.send("done ffs")
-
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         channel_id = message.channel.id
-        numbers = funcs.number_emojis()[:-3]
+        numbers = funcs.number_emojis()[:-1]
+        if user.bot:
+            return
         if message.channel.id in self.game_list:
-            if reaction.emoji == "⛔":
-                if user.id == self.game_list[channel_id].player1 or user.id == self.game_list[channel_id].player2:
+            if user.id == self.game_list[message.channel.id].player1 or user.id == self.game_list[
+                message.channel.id].player2:
+                if reaction.emoji == "⛔":
                     self.game_list.pop(channel_id, None)
                     await message.delete()
                     await message.channel.send("Game cancelled!")
                 else:
-                    await reaction.remove(user)
+                    if reaction.emoji in numbers:
+                        if self.game_list[channel_id].turn == user.id:
+                            index = numbers.index(reaction.emoji)
+                            target_color = self.game_list[channel_id].getColorFromPlayer(user.id)
+                            if self.game_list[channel_id].place(index, target_color):
+                                if not self.game_list[channel_id].getWinner():
+                                    if not self.game_list[channel_id].checkDraw():
+                                        updated_game_board_embed = message.embeds[0]
+                                        updated_game_board_embed.description = str(self.game_list[channel_id])
+                                        await message.edit(content="{}'s turn".format(
+                                            self.client.get_user(self.game_list[channel_id].turn).name),
+                                            embed=updated_game_board_embed)
+                                        await reaction.remove(user)
+                                    else:
+                                        await message.delete()
+                                        await message.channel.send("It's a draw!")
+                                        self.game_list.pop(channel_id, None)
+                                else:
+                                    await message.delete()
+                                    await message.channel.send("{} won! Congratulations. :tada:".format(
+                                        self.client.get_user(self.game_list[channel_id].getWinner()).mention))
+                                    self.game_list.pop(channel_id, None)
+                            else:
+                                await reaction.remove(user)
+                        else:
+                            await reaction.remove(user)
+                    else:
+                        await reaction.remove(user)
             else:
-                pass
+                await reaction.remove(user)
 
 
 def setup(client):
