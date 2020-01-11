@@ -17,7 +17,8 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
     def _get_game_from_list(self, channel_id: int):
         return self.game_list[channel_id]
 
-    @commands.command(name="ttt_start", description="Start a tic tac toe game", usage="<@mention>", aliases=["tstart"])
+    @commands.command(name="ttt_start", description="Start a tic tac toe game", usage="<@mention>",
+                      aliases=["tstart", "ttt"])
     @commands.guild_only()
     async def start(self, ctx, target_player: discord.Member):
         player1 = ctx.message.author.id
