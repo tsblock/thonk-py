@@ -2,11 +2,12 @@ import os
 
 import discord
 from discord.ext import commands
+from mongoengine import connect
 
 import config
 
 # connect to database
-
+connect("thonk", host=config.mongodb_url)
 
 prefix = "t."
 if not config.production:
