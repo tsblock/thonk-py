@@ -1,5 +1,5 @@
-import discord
 from discord.ext import commands
+
 from utils import funcs
 
 
@@ -21,6 +21,9 @@ class error_handler(commands.Cog):
                                                   "Correct usage: {}{} {}".format(self.client.command_prefix,
                                                                                   ctx.command.name,
                                                                                   ctx.command.usage)))
+        elif isinstance(error, commands.NoPrivateMessage):
+            await ctx.send(embed=funcs.errorEmbed(None,
+                                                  "You can not use this command in private message."))
 
 
 def setup(client):

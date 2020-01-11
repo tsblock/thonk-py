@@ -1,7 +1,10 @@
-import discord
-from utils import emotes, funcs
-from discord.ext import commands
 import ast
+
+import discord
+from discord.ext import commands
+
+from database import economy
+from utils import emotes, funcs
 
 
 class Administrator(commands.Cog, name="Administrator"):
@@ -49,6 +52,12 @@ class Administrator(commands.Cog, name="Administrator"):
     @commands.is_owner()
     async def say(self, ctx, *arg):
         await ctx.channel.send(" ".join(arg))
+
+    @commands.command(name="hack", description="hack into the nsa server so you get FREE MOnEY!!!!")
+    @commands.is_owner()
+    async def hack(self, ctx, amount: int):
+        economy.add(ctx.author.id, amount)
+        await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
 
 
 def setup(client):
