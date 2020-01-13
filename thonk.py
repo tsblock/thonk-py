@@ -12,6 +12,7 @@ connect("thonk", host=config.mongodb_url)
 prefix = "t."
 if not config.production:
     prefix = "tb."
+
 client = commands.Bot(command_prefix=prefix)
 client.remove_command("help")
 

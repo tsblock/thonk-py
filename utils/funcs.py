@@ -1,7 +1,9 @@
-import discord
-from utils.emotes import emotes
-import httpx
 from io import BytesIO
+
+import discord
+import httpx
+
+from utils.emotes import emotes
 
 
 def errorEmbed(error_title, message):
@@ -28,6 +30,13 @@ async def get_image_from_url(url):
     data = BytesIO(r.content)
     return discord.File(data, "aaa." + url[-3:])
 
+
 def number_emojis():
     return ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
 
+
+def format_timedelta(timedelta, time_str):
+    d = {"days": timedelta.days}
+    d["hours"], remain = divmod(timedelta.seconds, 3600)
+    d["minutes"], d["seconds"] = divmod(remain, 60)
+    return time_str.format(**d)
