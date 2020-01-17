@@ -3,14 +3,14 @@ from io import BytesIO
 import discord
 import httpx
 
-from utils.emotes import emotes
+from utils.emotes import Emotes
 
 
 def errorEmbed(error_title, message):
     if error_title is None:
         error_title = "Error!"
     embed = discord.Embed(
-        title="{} {}".format(emotes["cross"], error_title),
+        title="{} {}".format(Emotes.cross, error_title),
         color=discord.Color.red(),
         description="`{}`".format(message)
     )

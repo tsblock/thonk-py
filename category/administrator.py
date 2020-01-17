@@ -4,7 +4,8 @@ import discord
 from discord.ext import commands
 
 from database import economy
-from utils import emotes, funcs
+from utils import funcs
+from utils.emotes import Emotes
 
 
 class Administrator(commands.Cog, name="Administrator"):
@@ -37,16 +38,16 @@ class Administrator(commands.Cog, name="Administrator"):
             'ctx': ctx,
             '__import__': __import__,
             'funcs': funcs,
-            'emotes': emotes
+            'emotes': Emotes
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
         result = (await eval(f"{fn_name}()", env))
-        successEmbed = discord.Embed(
-            title="{} Code executed successfully".format(emotes.emotes["tick"]),
+        success_embed = discord.Embed(
+            title="{} Code executed successfully".format(Emotes.tick),
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
-        await ctx.channel.send(embed=successEmbed)
+        await ctx.channel.send(embed=success_embed)
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()

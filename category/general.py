@@ -1,8 +1,10 @@
-import discord
 import time
-from utils import funcs
-from utils.emotes import emotes
+
+import discord
 from discord.ext import commands
+
+from utils import funcs
+from utils.emotes import Emotes
 
 
 class General(commands.Cog, name="General"):
@@ -13,10 +15,10 @@ class General(commands.Cog, name="General"):
                       description="Shows latency of the bot, also for checking if the bot is responding")
     async def ping(self, ctx):
         previous_time = int(round(time.time() * 1000))
-        msg = await ctx.channel.send(emotes["thonkspin"])
+        msg = await ctx.channel.send(Emotes.thonkspin)
         current_time = int(round(time.time() * 1000))
         delta = current_time - previous_time
-        await msg.edit(content="{} `{}ms`".format(emotes["thonk"], delta))
+        await msg.edit(content="{} `{}ms`".format(Emotes.thonk, delta))
 
     @commands.command(name="help", description="Shows a list of command", usage="[command]", aliases=["cmds", "h"])
     async def help(self, ctx, *cmd):
