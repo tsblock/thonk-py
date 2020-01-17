@@ -1,9 +1,7 @@
-from enum import Enum
-
-
-class Emotes(Enum):
-    tick = "<:tick:569033942762651658>"
-    cross = "<:cross:569033942808789003>"
-    thonk = "<:thonk:591227893065973770>"
-    thonkery = "<:thonkery:591231657709928468>"
-    thonkspin = "<a:HyperThonkSpin:591233877075558401>"
+emotes = {
+    "tick": "<:tick:569033942762651658>",
+    "cross": "<:cross:569033942808789003>",
+    "thonk": "<:thonk:591227893065973770>",
+    "thonkery": "<:thonkery:591231657709928468>",
+    "thonkspin": "<a:HyperThonkSpin:591233877075558401>"
+}

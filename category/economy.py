@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from database import economy
 from utils import funcs
-from utils.emotes import Emotes
+from utils.emotes import emotes
 
 
 class Economy(commands.Cog, name="Economy"):
@@ -46,7 +46,7 @@ class Economy(commands.Cog, name="Economy"):
         economy.add(ctx.author.id, -amount)
         economy.add(target_member.id, amount)
         pay_embed = discord.Embed(
-            title="{} Payment done!".format(Emotes.tick),
+            title="{} Payment done!".format(emotes["tick"]),
             description="You have sent ${} to {}".format(str(amount), target_member.mention),
             color=discord.Color.green()
         )
@@ -62,7 +62,7 @@ class Economy(commands.Cog, name="Economy"):
             economy.add(ctx.author.id, 1000)
             target_document.last_daily = present
             success_embed = discord.Embed(
-                title="{} Daily reward has been claimed!".format(Emotes.tick),
+                title="{} Daily reward has been claimed!".format(emotes["tick"]),
                 description="**$** 1000 has been added to your wallet.",
                 color=discord.Color.green()
             )
