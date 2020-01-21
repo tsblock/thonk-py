@@ -1,8 +1,10 @@
 import ast
+import asyncio
 
 import discord
 from discord.ext import commands
 
+import config
 from database import economy
 from utils import emotes, funcs
 
@@ -58,6 +60,22 @@ class Administrator(commands.Cog, name="Administrator"):
     async def hack(self, ctx, amount: int):
         economy.add(ctx.author.id, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
+
+    @commands.command(name="reset_eco", description="proceed with caution lmaolmaomlmomalmaom")
+    @commands.is_owner()
+    async def reset_eco(self, ctx):
+        if config.production:
+            await ctx.send("why you are doing this in production")
+        else:
+            await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
+            try:
+                msg = await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
+            except asyncio.TimeoutError:
+                await ctx.send("lol pussy")
+            else:
+                for document in economy.EconomyDocument.objects:
+                    document.delete()
+                await ctx.send("Done! :)")
 
 
 def setup(client):

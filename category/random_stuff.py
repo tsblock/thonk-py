@@ -76,7 +76,15 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             msg = await ctx.channel.send(embed=urban_embed)
             # await msg.add_reaction("◀")
             # await msg.add_reaction("▶")
-            # await msg.add_reaction("⏹")
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name="wpm", description="Test your typing speed.")
+    async def wpm(self, ctx):
+        with open("../utils/words.txt") as f:
+            words = f.readlines()
+        sentence = ""
+        for index in range(50):
+            sentence += words[index] + " "
 
 
 def setup(client):

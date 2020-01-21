@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from mongoengine import *
 
 
 class EconomyDocument(Document):
     user_id = IntField(required=True)
     balance = IntField(default=0)
-    last_daily: DateTimeField(default=None)
+    next_daily = DateTimeField(default=datetime.utcnow())
 
 
 def init(user_id):
@@ -22,8 +24,6 @@ def get(user_id):
 
 
 def add(user_id, value):
-    target_document = EconomyDocument.objects().get(user_id=user_id)
-    if not target_document:
-        target_document = init(user_id)
+    target_document = get(user_id)
     target_document.balance += value
     target_document.save()
