@@ -80,11 +80,13 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="wpm", description="Test your typing speed.")
     async def wpm(self, ctx):
-        with open("../utils/words.txt") as f:
-            words = f.readlines()
-        sentence = ""
-        for index in range(50):
-            sentence += words[index] + " "
+        info_msg = await ctx.send("Getting an extract from Wikipedia...")
+        await ctx.trigger_typing()
+        res = await httpx.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+        extract = res.json()["extract"]
+        extract.replace(" ", " \u200B")  # prevent copy and pasting lolololo
+        await info_msg.delete()
+        await ctx.send(extract)
 
 
 def setup(client):
