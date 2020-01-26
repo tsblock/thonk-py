@@ -18,17 +18,18 @@ def errorEmbed(error_title, message):
 
 
 async def simple_get_request(url):
-    r = await httpx.get(url)
-    if r.status_code == 200:
-        return r.json()
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url)
+    return r.json()
 
 
 async def get_image_from_url(url):
-    r = await httpx.get(url)
-    if r.status_code != 200:
-        return None
-    data = BytesIO(r.content)
-    return discord.File(data, "aaa." + url[-3:])
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url)
+        if r.status_code != 200:
+            return None
+        data = BytesIO(r.content)
+        return discord.File(data, "placeholder." + url[-3:])
 
 
 def number_emojis():
