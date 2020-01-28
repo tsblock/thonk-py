@@ -1,3 +1,6 @@
+import asyncio
+from datetime import datetime
+
 import discord
 import httpx
 from discord.ext import commands
@@ -80,14 +83,28 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="wpm", description="Test your typing speed.")
     async def wpm(self, ctx):
+        return ctx.send("wip")
         info_msg = await ctx.send("Getting an extract from Wikipedia...")
         await ctx.trigger_typing()
-        res = await httpx.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
-        extract = res.json()["extract"]
-        extract.replace(" ", " \u200B")  # prevent copy and pasting lolololo
+        async with httpx.AsyncClient() as client:
+            res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+            full_extract = res.json()["extract"].split()[:49]
+            extract = " ".join(full_extract)
+            extract.replace(" ", " ឵឵឵")  # prevent copy and pasting lolololo
         await info_msg.delete()
         await ctx.send(extract)
-
+        await ctx.send("original string: " + " ".join(full_extract))
+        start_time = datetime.utcnow()
+        try:
+            msg = await self.client.wait_for("message", timeout=120.0, check=lambda x: x.channel.id == ctx.channel.id)
+        except asyncio.TimeoutError:
+            await ctx.send("lol too slow")
+        else:
+            content = msg.content
+            if "឵឵឵" in content:
+                await ctx.send("wow cheater")
+            else:
+                pass
 
 def setup(client):
     client.add_cog(RandomStuff(client))
