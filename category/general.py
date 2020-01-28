@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from utils import funcs
-from utils.emotes import Emotes
+from utils.emotes import emotes
 
 
 class General(commands.Cog, name="General"):
