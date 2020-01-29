@@ -22,8 +22,6 @@ async def on_ready():
     print("Ready!")
     presence = discord.Activity(name="for {}".format(client.command_prefix), type=discord.ActivityType.watching)
     await client.change_presence(status=discord.Status.online, activity=presence)
-    if config.production:
-        await client.get_channel(661589807901704222).send("<@659739607365320725> i hate you so much")
 
 
 for file in os.listdir("./category"):

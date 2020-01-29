@@ -3,6 +3,9 @@ import re
 import cleverbotfree.cbfree
 from discord.ext import commands
 
+
+import config
+
 cb = cleverbotfree.cbfree.Cleverbot()
 
 
@@ -20,7 +23,12 @@ class Cleverbot(commands.Cog):
             elif message.channel.id != 661589807901704222 and not message.author.bot:
                 msg = re.sub("<@!?" + str(self.client.user.id) + ">", "", message.content).strip()
                 await message.channel.send(message.author.mention + " " + cb.single_exchange(msg))
-
-
+    
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if config.production:
+            await self.client.get_channel(661589807901704222).send("<@659739607365320725> i hate you so much")
+            
+            
 def setup(client):
     client.add_cog(Cleverbot(client))
