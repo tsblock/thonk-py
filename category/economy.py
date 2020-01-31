@@ -151,6 +151,24 @@ class Economy(commands.Cog, name="Economy"):
             )
             await ctx.send(embed=failed_embed)
 
+    @commands.command(name="eco_leaderboard", description="Show top 10 richest user.", aliases=["etop"])
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def eco_leaderboard(self, ctx):
+        await ctx.trigger_typing()
+        doc_list = economy.EconomyDocument.objects.order_by("-balance").limit(10)
+        leaderboard_embed = discord.Embed(
+            color=discord.Color.green(),
+            title="💰 **Top 10 richest members** 💰",
+            description=""
+        )
+        index = 0
+        for document in doc_list:
+            member_name = str(self.client.get_user(document.user_id))
+            balance = document.balance
+            index += 1
+            leaderboard_embed.description += "**{}.** **{}** ${}\n".format(index, member_name, balance)
+        await ctx.send(embed=leaderboard_embed)
+
 
 def setup(client):
     client.add_cog(Economy(client))

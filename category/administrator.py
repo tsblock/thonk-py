@@ -57,8 +57,11 @@ class Administrator(commands.Cog, name="Administrator"):
 
     @commands.command(name="hack", description="hack into the nsa server so you get FREE MOnEY!!!!")
     @commands.is_owner()
-    async def hack(self, ctx, amount: int):
-        economy.add(ctx.author.id, amount)
+    async def hack(self, ctx, amount: int, *target_member: discord.Member):
+        member = ctx.author.id
+        if target_member:
+            member = target_member
+        economy.add(member, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
 
     @commands.command(name="reset_eco", description="proceed with caution lmaolmaomlmomalmaom")
