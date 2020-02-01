@@ -87,7 +87,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         await ctx.trigger_typing()
         async with httpx.AsyncClient() as client:
             res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
-            full_extract = res.json()["extract"].split()[:10]
+            full_extract = res.json()["extract"].split()[:49]
             extract = " ".join(full_extract)
         await info_msg.delete()
         await ctx.send(extract.replace(" ", " ឵឵឵"))
