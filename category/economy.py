@@ -45,7 +45,7 @@ class Economy(commands.Cog, name="Economy"):
         economy.add(ctx.author.id, -amount)
         economy.add(target_member.id, amount)
         pay_embed = discord.Embed(
-            title="{} Payment done!".format(emotes["tick"]),
+            title="{} Money sent!".format(emotes["tick"]),
             description="You have sent ${} to {}".format(str(amount), target_member.mention),
             color=discord.Color.green()
         )

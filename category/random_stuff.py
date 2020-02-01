@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+import time
 
 import discord
 import httpx
@@ -80,31 +80,40 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             # await msg.add_reaction("◀")
             # await msg.add_reaction("▶")
 
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name="wpm", description="Test your typing speed.")
     async def wpm(self, ctx):
-        return ctx.send("wip")
         info_msg = await ctx.send("Getting an extract from Wikipedia...")
         await ctx.trigger_typing()
         async with httpx.AsyncClient() as client:
             res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
-            full_extract = res.json()["extract"].split()[:49]
+            full_extract = res.json()["extract"].split()[:10]
             extract = " ".join(full_extract)
-            extract.replace(" ", " ឵឵឵")  # prevent copy and pasting lolololo
         await info_msg.delete()
-        await ctx.send(extract)
-        await ctx.send("original string: " + " ".join(full_extract))
-        start_time = datetime.utcnow()
+        await ctx.send(extract.replace(" ", " ឵឵឵"))
+        start_time = time.time()
         try:
             msg = await self.client.wait_for("message", timeout=120.0, check=lambda x: x.channel.id == ctx.channel.id)
         except asyncio.TimeoutError:
-            await ctx.send("lol too slow")
+            await ctx.send("You are too slow.")
         else:
-            content = msg.content
-            if "឵឵឵" in content:
-                await ctx.send("wow cheater")
+            input_text = msg.content
+            if "឵឵឵" in input_text:
+                await ctx.send("Lol cheater.")
             else:
-                pass
+                end_time = time.time()
+                delta_time = end_time - start_time
+                count = 0
+                for i, c in enumerate(extract):
+                    if input_text[i] == c:
+                        count += 1
+                accuracy = round(count / len(extract) * 100, 2)
+                word_list = [input_text[i:i + 5] for i in range(0, len(input_text), 5)]
+                wpm = round(len(input_text) * 60 / (5 * delta_time), 2)
+
+                await ctx.send("**WPM:** {}\n"
+                               "**Accuracy: ** {}%".format(wpm, accuracy))
+
 
 def setup(client):
     client.add_cog(RandomStuff(client))
