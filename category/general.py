@@ -3,6 +3,7 @@ import time
 import discord
 from discord.ext import commands
 
+from database import economy
 from utils import funcs
 from utils.emotes import emotes
 
@@ -18,7 +19,11 @@ class General(commands.Cog, name="General"):
         msg = await ctx.channel.send(emotes["thonkspin"])
         current_time = int(round(time.time() * 1000))
         delta = current_time - previous_time
-        await msg.edit(content="{} `{}ms`".format(emotes["thonk"], delta))
+        if delta == 420:
+            economy.add(ctx.author.id, 420)
+            await msg.edit(content="{} `{}ms`\nAdded **$** 420 to your wallet.".format(emotes["weed"], delta))
+        else:
+            await msg.edit(content="{} `{}ms`".format(emotes["thonk"], delta))
 
     @commands.command(name="help", description="Shows a list of command", usage="[command]", aliases=["cmds", "h"])
     async def help(self, ctx, *cmd):
@@ -28,7 +33,7 @@ class General(commands.Cog, name="General"):
             )
             listEmbed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
             for cogs in self.client.cogs:  # loop through each category
-                if len(self.client.get_cog(cogs).get_commands()) == 0:  # hacky hack to skip handlers
+                if len(self.client.get_cog(cogs).get_commands()) == 0:  # hacky way to skip handlers
                     continue
                 cmd_list = ""
                 for cmd_name in self.client.get_cog(cogs).get_commands():
