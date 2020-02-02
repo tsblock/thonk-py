@@ -57,7 +57,8 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.command(name="urban", description="Urban Dictionary, but in Discord.", usage="<term>")
     async def urban(self, ctx, *, term):
         params = {"term": term}
-        res = await httpx.get("http://api.urbandictionary.com/v0/define", params=params)
+        async with httpx.AsyncClient() as client:
+            res = await client.get("http://api.urbandictionary.com/v0/define", params=params)
         data = res.json()["list"]
         await ctx.trigger_typing()
         if len(data) == 0:
@@ -89,13 +90,12 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
             full_extract = res.json()["extract"].split()[:49]
             extract = " ".join(full_extract)
-        await info_msg.delete()
-        await ctx.send(extract.replace(" ", " ឵឵឵"))
+        await info_msg.edit(content=extract.replace(" ", " ឵឵឵"))
         start_time = time.time()
         try:
             msg = await self.client.wait_for("message", timeout=120.0, check=lambda x: x.channel.id == ctx.channel.id)
         except asyncio.TimeoutError:
-            await ctx.send("You are too slow.")
+            await ctx.send("Times out! Type faster next time.")
         else:
             input_text = msg.content
             if "឵឵឵" in input_text:
