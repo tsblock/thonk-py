@@ -93,7 +93,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         await info_msg.edit(content=extract.replace(" ", " ឵឵឵"))
         start_time = time.time()
         try:
-            msg = await self.client.wait_for("message", timeout=120.0, check=lambda x: x.channel.id == ctx.channel.id)
+            msg = await self.client.wait_for("message", timeout=120.0, check=lambda x: x.channel.id == ctx.channel.id and x.author.id == ctx.author.id)
         except asyncio.TimeoutError:
             await ctx.send("Times out! Type faster next time.")
         else:
