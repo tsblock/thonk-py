@@ -57,7 +57,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.command(name="urban", description="Urban Dictionary, but in Discord.", usage="<term>")
     async def urban(self, ctx, *, term):
         params = {"term": term}
-        res = await httpx.get("https://api.urbandictionary.com/v0/define", params=params)
+        res = await httpx.get("http://api.urbandictionary.com/v0/define", params=params)
         data = res.json()["list"]
         await ctx.trigger_typing()
         if len(data) == 0:
