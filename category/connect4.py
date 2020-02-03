@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from game_models.connect4game import Connect4Game
+from game_models.connect4_game import Connect4Game
 from utils import funcs
 
 
