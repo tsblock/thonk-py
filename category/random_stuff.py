@@ -81,8 +81,8 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             # await msg.add_reaction("◀")
             # await msg.add_reaction("▶")
 
-    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name="wpm", description="Test your typing speed.")
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def wpm(self, ctx):
         info_msg = await ctx.send("Getting an extract from Wikipedia...")
         await ctx.trigger_typing()
@@ -108,7 +108,6 @@ class RandomStuff(commands.Cog, name="Random stuff"):
                     if input_text[i] == c:
                         count += 1
                 accuracy = round(count / len(extract) * 100, 2)
-                word_list = [input_text[i:i + 5] for i in range(0, len(input_text), 5)]
                 wpm = round(len(input_text) * 60 / (5 * delta_time), 2)
 
                 await ctx.send("**WPM:** {}\n"
