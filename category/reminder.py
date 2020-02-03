@@ -3,32 +3,17 @@ from datetime import datetime
 
 import discord
 import parsedatetime
-from apscheduler.jobstores.mongodb import MongoDBJobStore
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord.ext import commands
 
-import config
 from database import reminder
 from utils import funcs
-
-job_stores = {
-    "default": MongoDBJobStore(host=config.mongodb_url, collection="reminder_jobs", database="thonk")
-}
-
-scheduler = AsyncIOScheduler(
-    jobstores=job_stores
-)
 
 
 class Reminder(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        scheduler.start()
-
-    async def send_remind(self, user_id, remind_text, job_id):
+    async def send_remind(self, user_id, remind):
         user = self.client.get_user(user_id)
         if not user:
             return
@@ -37,15 +22,30 @@ class Reminder(commands.Cog):
             title="Reminder",
             description="Hello {}!\n"
                         "I'm here to remind you:\n"
-                        "```{}```".format(user.name, remind_text)
+                        "```{}```".format(user.name, remind.remind_text)
         )
-        scheduler.remove_job(job_id)
         await user.send(embed=remind_embed)
 
     @commands.command(name="remindlist", description="List your reminders", aliases=["rlist"])
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    # @commands.cooldown(1, 10, commands.BucketType.user)
     async def remind_list(self, ctx):
-        pass
+        target_document = reminder.get(ctx.author.id)
+        list_embed = discord.Embed(
+            color=discord.Color.from_rgb(255, 255, 0),
+            title="📃 List of reminders",
+        )
+        if len(target_document.reminds) == 0:
+            list_embed.description = "None. Create one with {}remindme.".format(self.client.command_prefix)
+        else:
+            index = 0
+            description = ""
+            for remind in target_document.reminds:
+                description += "**{}.** `{}`\nTrigger time: `{}` Repeat: `{}`\n\n".format(index, remind.remind_text,
+                                                                                          remind.remind_date,
+                                                                                          remind.repeat)
+                index += 1
+            list_embed.description = description
+        await ctx.send(embed=list_embed)
 
     @commands.command(name="remindme", description="Remind you things I guess.",
                       usage="\"<date>\" [repeat? true/false] <text>\n"
