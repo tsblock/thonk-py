@@ -28,18 +28,19 @@ class General(commands.Cog, name="General"):
     @commands.command(name="help", description="Shows a list of command", usage="[command]", aliases=["cmds", "h"])
     async def help(self, ctx, *cmd):
         if not cmd:  # no command specified
-            listEmbed = discord.Embed(
-                color=discord.Color.from_rgb(255, 255, 0)
+            list_embed = discord.Embed(
+                color=discord.Color.from_rgb(255, 255, 0),
+                description="The worst bot ever made by TheSimpleBlock#0534."
             )
-            listEmbed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
+            list_embed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
             for cogs in self.client.cogs:  # loop through each category
                 if len(self.client.get_cog(cogs).get_commands()) == 0:  # hacky way to skip handlers
                     continue
                 cmd_list = ""
                 for cmd_name in self.client.get_cog(cogs).get_commands():
                     cmd_list += "`{}`\n".format(cmd_name)
-                listEmbed.add_field(name=cogs, value=cmd_list)
-            await ctx.channel.send(embed=listEmbed)
+                list_embed.add_field(name=cogs, value=cmd_list)
+            await ctx.channel.send(embed=list_embed)
         else:
             if self.client.get_command(cmd[0]) is not None:
                 cmd_object = self.client.get_command(cmd[0])
