@@ -9,7 +9,6 @@ class RemindListDocument(Document):
 class RemindDocument(EmbeddedDocument):
     remind_text = StringField(required=True)
     remind_date = DateTimeField(required=True)
-    repeat = BooleanField(default=False)
 
 
 def init(user_id):
