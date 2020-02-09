@@ -90,7 +90,7 @@ class Administrator(commands.Cog, name="Administrator"):
         else:
             await ctx.send("reloading soon, should i `git pull` too?")
             try:
-                msg = await self.client.wait_for("message", check=lambda x: x.author.id == ctx.author.ix, timeout=5.0)
+                msg = await self.client.wait_for("message", check=lambda x: x.author.id == ctx.author.id, timeout=5.0)
             except asyncio.TimeoutError:
                 await ctx.send("no confirmation bye")
             else:
