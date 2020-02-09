@@ -94,6 +94,7 @@ class Administrator(commands.Cog, name="Administrator"):
             except asyncio.TimeoutError:
                 await ctx.send("no confirmation bye")
             else:
+                await ctx.send("k")
                 if msg.content == "yes":
                     output = subprocess.check_output(["git", "pull"])
                     await ctx.send("```{}```".format(output))
