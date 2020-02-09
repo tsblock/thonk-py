@@ -26,6 +26,7 @@ class Connect4Game:
         self.turn = player1
         self.board = [[EMPTY] * 6 for _ in range(7)]
         self.winner = None
+        self.last_react_time = None
 
     def place(self, column, color):
         if self.board[column][0] != EMPTY:

@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 from game_models.connect4_game import Connect4Game
 from utils import funcs
@@ -43,6 +45,8 @@ class Connect4(commands.Cog, name="Connect 4"):
             for num in range(7):
                 await game_msg.add_reaction(funcs.number_emojis()[num])
             await game_msg.add_reaction("⛔")
+            self.game_list[ctx.channel.id].last_react_time = datetime.utcnow()
+            self.game_end_check_loop.start(game_msg)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -61,6 +65,7 @@ class Connect4(commands.Cog, name="Connect 4"):
                 else:
                     if reaction.emoji in numbers:
                         if self.game_list[channel_id].turn == user.id:
+                            self.game_list[message.channel.id].last_react_time = datetime.utcnow()
                             index = numbers.index(reaction.emoji)
                             target_color = self.game_list[channel_id].getColorFromPlayer(user.id)
                             if self.game_list[channel_id].place(index, target_color):
@@ -89,6 +94,15 @@ class Connect4(commands.Cog, name="Connect 4"):
                         await reaction.remove(user)
             else:
                 await reaction.remove(user)
+
+    @tasks.loop(seconds=1.0)
+    async def game_end_check_loop(self, message):
+        if self.game_list[message.channel.id].winner is None:
+            now = datetime.utcnow()
+            if now - self.game_list[message.channel.id].last_react_time > timedelta(minutes=1.0):
+                self.game_list.pop(message.channel.id, None)
+                await message.delete()
+                await message.channel.send("Game cancelled due to inactivity.")
 
 
 def setup(client):

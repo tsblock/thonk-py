@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 from game_models.tictactoe_game import TictactoeGame
 from utils import funcs
@@ -21,7 +23,7 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
                       aliases=["tstart", "ttt"])
     @commands.guild_only()
     async def start(self, ctx, target_player: discord.Member):
-        player1 = ctx.message.author.id
+        player1 = ctx.author.id
         player2 = target_player.id
 
         if target_player.bot:
@@ -43,44 +45,58 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
             for reactions in funcs.number_emojis():
                 await game_msg.add_reaction(reactions)
             await game_msg.add_reaction("⛔")
+            self.game_list[ctx.channel.id].last_react_time = datetime.utcnow()
+            self.game_end_check_loop.start(game_msg)
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
-        if message.channel.id in self.game_list:
-            if reaction.emoji == "⛔":
-                if user.id == self.game_list[message.channel.id].player1 or user.id == self.game_list[message.channel.id].player2:
-                    self.game_list.pop(message.channel.id, None)
+        if message.channel.id not in self.game_list or self.client.user.id != user.id:
+            return
+        if reaction.emoji == "⛔":
+            if user.id == self.game_list[message.channel.id].player1 or user.id == self.game_list[
+                message.channel.id].player2:
+                self.game_list.pop(message.channel.id, None)
+                await message.delete()
+                await message.channel.send("Game cancelled!")
+            else:
+                await reaction.remove(user)
+            return
+        if self.game_list[message.channel.id].turn == user.id:
+            self.game_list[message.channel.id].last_react_time = datetime.utcnow()
+            index = funcs.number_emojis().index(reaction.emoji)
+            if self.game_list[message.channel.id][index] == "🔲":
+                self.game_list[message.channel.id].place(index)
+                if self.game_list[message.channel.id].check_for_win():
                     await message.delete()
-                    await message.channel.send("Game cancelled!")
+                    await message.channel.send("{} wins! Congratulations. :tada:".format(
+                        self.client.get_user(self.game_list[message.channel.id].winner).mention))
+                    self.game_list.pop(message.channel.id, None)
+                elif self.game_list[message.channel.id].check_for_draw():
+                    await message.delete()
+                    await message.channel.send("It's a draw!")
+                    self.game_list.pop(message.channel.id, None)
                 else:
+                    updated_game_board_embed = message.embeds[0]
+                    updated_game_board_embed.description = str(self.game_list[message.channel.id])
+                    await message.edit(
+                        content="{}'s turn".format(
+                            self.client.get_user(self.game_list[message.channel.id].turn).name),
+                        embed=updated_game_board_embed)
                     await reaction.remove(user)
             else:
-                if self.game_list[message.channel.id].turn == user.id:
-                    index = funcs.number_emojis().index(reaction.emoji)
-                    if self.game_list[message.channel.id][index] == "🔲":
-                        self.game_list[message.channel.id].place(index)
-                        if self.game_list[message.channel.id].check_for_win():
-                            await message.delete()
-                            await message.channel.send("{} wins! Congratulations. :tada:".format(
-                                self.client.get_user(self.game_list[message.channel.id].winner).mention))
-                            self.game_list.pop(message.channel.id, None)
-                        elif self.game_list[message.channel.id].check_for_draw():
-                            await message.delete()
-                            await message.channel.send("It's a draw!")
-                            self.game_list.pop(message.channel.id, None)
-                        else:
-                            updated_game_board_embed = message.embeds[0]
-                            updated_game_board_embed.description = str(self.game_list[message.channel.id])
-                            await message.edit(
-                                content="{}'s turn".format(
-                                    self.client.get_user(self.game_list[message.channel.id].turn).name),
-                                embed=updated_game_board_embed)
-                            await reaction.remove(user)
-                    else:
-                        await reaction.remove(user)
-                elif user.id != self.client.user.id:
-                    await reaction.remove(user)
+                await reaction.remove(user)
+        elif user.id != self.client.user.id:
+            await reaction.remove(user)
+
+    @tasks.loop(seconds=1.0)
+    async def game_end_check_loop(self, message):
+        if self.game_list[message.channel.id].winner is None:
+            now = datetime.utcnow()
+            if now - self.game_list[message.channel.id].last_react_time > timedelta(minutes=1.0):
+                self.game_list.pop(message.channel.id, None)
+                await message.delete()
+                await message.channel.send("Game cancelled due to inactivity.")
 
 
 def setup(client):
