@@ -1,5 +1,7 @@
 import ast
 import asyncio
+import subprocess
+import sys
 
 import discord
 from discord.ext import commands
@@ -79,6 +81,23 @@ class Administrator(commands.Cog, name="Administrator"):
                 for document in economy.EconomyDocument.objects:
                     document.delete()
                 await ctx.send("Done! :)")
+
+    @commands.command(name="reload", description="reload the bot")
+    @commands.is_owner()
+    async def reload(self, ctx):
+        if not config.production:
+            await ctx.send("are you stupid? press shift+f9 in your pycharm you dumb fuck")
+        else:
+            await ctx.send("reloading soon, should i `git pull` too?")
+            try:
+                msg = await self.client.wait_for("message", timeout=5.0)
+            except asyncio.TimeoutError:
+                await ctx.send("no confirmation bye")
+            else:
+                if msg.content == "yes":
+                    output = subprocess.check_output(["git", "pull"])
+                    await ctx.send("```{}```".format(output))
+                sys.exit()
 
 
 def setup(client):
