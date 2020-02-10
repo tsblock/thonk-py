@@ -88,7 +88,7 @@ class Administrator(commands.Cog, name="Administrator"):
         if not config.production:
             await ctx.send("are you stupid? press shift+f9 in your pycharm you dumb fuck")
         else:
-            await ctx.send("reloading soon, should i `git pull` too?")
+            await ctx.send("reloading soon, say anything to confirm, say yes if you want git pull too")
             try:
                 msg = await self.client.wait_for("message", check=lambda x: x.author.id == ctx.author.id, timeout=5.0)
             except asyncio.TimeoutError:
