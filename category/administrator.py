@@ -59,10 +59,8 @@ class Administrator(commands.Cog, name="Administrator"):
 
     @commands.command(name="hack", description="hack into the nsa server so you get FREE MOnEY!!!!")
     @commands.is_owner()
-    async def hack(self, ctx, amount: int, *target_member: discord.Member):
+    async def hack(self, ctx, amount: int):
         member = ctx.author.id
-        if target_member:
-            member = target_member
         economy.add(member, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
 
@@ -82,13 +80,13 @@ class Administrator(commands.Cog, name="Administrator"):
                     document.delete()
                 await ctx.send("Done! :)")
 
-    @commands.command(name="reload", description="reload the bot")
+    @commands.command(name="restart", description="restart the bot")
     @commands.is_owner()
-    async def reload(self, ctx):
+    async def restart(self, ctx):
         if not config.production:
-            await ctx.send("are you stupid? press shift+f9 in your pycharm you dumb fuck")
+            await ctx.send("press shift+f9 in your pycharm you dumb fuck")
         else:
-            await ctx.send("reloading soon, say anything to confirm, say yes if you want git pull too")
+            await ctx.send("restarting soon, say anything to confirm, say yes if you want git pull too")
             try:
                 msg = await self.client.wait_for("message", check=lambda x: x.author.id == ctx.author.id, timeout=5.0)
             except asyncio.TimeoutError:
