@@ -15,8 +15,8 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.cooldown(1, 5, commands.BucketType.default)
     @commands.command(name="cat", description="Shows a random cat")
     async def cat(self, ctx):
-        res = await funcs.simple_get_request("http://aws.random.cat/meow")
-        file = await funcs.get_image_from_url(str(res["file"]))
+        res = await funcs.simple_get_request("https://some-random-api.ml/img/cat")
+        file = await funcs.get_image_from_url(str(res["link"]))
         await ctx.channel.send(file=file)
 
     @commands.cooldown(1, 5, commands.BucketType.default)
