@@ -15,7 +15,7 @@ class Cleverbot(commands.Cog):
         if self.client.user in message.mentions and not message.content.startswith("t."):
             await message.channel.trigger_typing()
             msg = re.sub("<@!?" + str(self.client.user.id) + ">", "", message.content).strip()
-            params = {'botid': 'b0dafd24ee35a477', 'custid': message.author.id, 'input': msg or 'Hello'}
+            params = {'botid': 'e904a1fbae34ddc1', 'custid': message.author.id, 'input': msg or 'Hello'}
             async with httpx.AsyncClient() as client:
                 res = await client.get("https://www.pandorabots.com/pandora/talk-xml", params=params)
                 text = res.text
