@@ -57,15 +57,32 @@ class Economy(commands.Cog, name="Economy"):
         self_document = economy.get(ctx.author.id)
         next_daily = self_document.next_daily
         present = datetime.utcnow()
-        if next_daily is None or present > next_daily:
+        if present > next_daily:
             economy.add(ctx.author.id, 1000)
             self_document.next_daily = present + timedelta(days=1)
+            self_document.daily_streak += 1
             self_document.save()
+            streak_bar = ""
+            if present > next_daily + timedelta(days=1):
+                self_document.daily_streak = 0
+                self_document.save()
+            for i in range(self_document.daily_streak * 2):
+                streak_bar += "[█](https://rickrolled.fr/)"  # haha im very funny
+            for i in range(10 - (self_document.daily_streak * 2)):
+                streak_bar += "█"
             success_embed = discord.Embed(
-                title="{} Daily reward has been claimed!".format(emotes["tick"]),
-                description="**$** 1000 has been added to your wallet.",
+                title="{} Claimed daily bonus".format(emotes["tick"]),
+                description="**$** 1000 has been added to your wallet.\n\n"
+                            "**Daily streak progress:** {}".format(streak_bar),
                 color=discord.Color.green()
             )
+            if self_document.daily_streak == 5:
+                bonus_amount = random.randrange(500, 1000)
+                success_embed.description += "\n\n🎉 **You have completed a streak and received extra ${}**".format(
+                    bonus_amount)
+                economy.add(ctx.author.id, bonus_amount)
+                self_document.daily_streak = 0
+                self_document.save()
             await ctx.send(embed=success_embed)
         else:
             time_left = next_daily - present
@@ -74,7 +91,7 @@ class Economy(commands.Cog, name="Economy"):
                                                                                     "{seconds} seconds"))
             await ctx.send(embed=failed_embed)
 
-    @commands.command(name="gamble", description="Pure gambling lol, 30% chance of winning.")
+    @commands.command(name="gamble", description="Pure gambling lol, 50% chance of winning.")
     @commands.cooldown(3, 10, commands.BucketType.user)
     async def gamble(self, ctx, amount: int):
         self_document = economy.get(ctx.author.id)
@@ -126,7 +143,8 @@ class Economy(commands.Cog, name="Economy"):
             await ctx.send(embed=funcs.errorEmbed(None, "I would love to see how you rob yourself."))
             return
         luck = random.randrange(1, 100)
-        if luck <= 30:  # rob success!
+        # TODO: increase the chance when bank system is done
+        if luck <= 5:  # rob success!
             economy.add(ctx.author.id, amount)
             economy.add(target_member.id, -amount)
             success_embed = discord.Embed(

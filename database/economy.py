@@ -7,6 +7,7 @@ class EconomyDocument(Document):
     user_id = IntField(required=True)
     balance = IntField(default=0)
     next_daily = DateTimeField(default=datetime.utcnow())
+    daily_streak = IntField(default=0)
 
 
 def init(user_id):
