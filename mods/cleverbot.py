@@ -23,7 +23,7 @@ class Cleverbot(commands.Cog):
                 text = text.replace('&quot;', '"').replace('&lt;', '<').replace('&gt;', '>').replace('&amp;',
                                                                                                      '&').replace(
                     '<br>', ' ')
-            await message.channel.send("{}, {}".format(message.author.mention, text))
+            await message.channel.send("{} {}".format(message.author.mention, text))
 
 
 @commands.Cog.listener()

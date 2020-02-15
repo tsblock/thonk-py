@@ -5,3 +5,4 @@ googletrans==2.4.0
 httpx==0.11.0
 parsedatetime==2.5
 youtube-dl==2020.1.24
+youtube-search==0.1.3
