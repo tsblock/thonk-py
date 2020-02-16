@@ -144,7 +144,7 @@ class Economy(commands.Cog, name="Economy"):
             return
         luck = random.randrange(1, 100)
         # TODO: increase the chance when bank system is done
-        if luck <= 5:  # rob success!
+        if luck <= 10:  # rob success!
             economy.add(ctx.author.id, amount)
             economy.add(target_member.id, -amount)
             success_embed = discord.Embed(
