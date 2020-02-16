@@ -36,7 +36,7 @@ class Connect4(commands.Cog, name="Connect 4"):
         else:
             initial_game_board_embed = discord.Embed(
                 color=discord.Color.blue(),
-                title="{} vs {}".format(ctx.message.author.name, target_player.name),
+                title="{} vs {}\nReact with ⛔ to cancel the game".format(ctx.message.author.name, target_player.name),
             )
             self.game_list[ctx.channel.id] = Connect4Game(player1, player2)  # add a instance of a game to game list
             initial_game_board_embed.description = str(self._get_game_from_list(ctx.channel.id))
@@ -60,7 +60,6 @@ class Connect4(commands.Cog, name="Connect 4"):
                     or user.id == self.game_list[message.channel.id].player2:
                 if reaction.emoji == "⛔":
                     self.game_list.pop(channel_id, None)
-                    await message.delete()
                     await message.channel.send("Game cancelled!")
                 else:
                     if reaction.emoji in numbers:
@@ -78,11 +77,9 @@ class Connect4(commands.Cog, name="Connect 4"):
                                             embed=updated_game_board_embed)
                                         await reaction.remove(user)
                                     else:
-                                        await message.delete()
                                         await message.channel.send("It's a draw!")
                                         self.game_list.pop(channel_id, None)
                                 else:
-                                    await message.delete()
                                     await message.channel.send("{} won! Congratulations. :tada:".format(
                                         self.client.get_user(self.game_list[channel_id].getWinner()).mention))
                                     self.game_list.pop(channel_id, None)
@@ -101,7 +98,6 @@ class Connect4(commands.Cog, name="Connect 4"):
             now = datetime.utcnow()
             if now - self.game_list[message.channel.id].last_react_time > timedelta(minutes=1.0):
                 self.game_list.pop(message.channel.id, None)
-                await message.delete()
                 await message.channel.send("Game cancelled due to inactivity.")
 
 
