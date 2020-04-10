@@ -187,12 +187,6 @@ class Economy(commands.Cog, name="Economy"):
             leaderboard_embed.description += "**{}.** **{}** ${}\n".format(index, member_name, balance)
         await ctx.send(embed=leaderboard_embed)
 
-    # @commands.command(name="bank", description="Bank main command")
-    # @commands.cooldown(1, 5, commands.BucketType.user)
-    # async def bank(self, ctx):
-    #     if ctx.invoked_subcommand is None:
-    #         pass
-
 
 def setup(client):
     client.add_cog(Economy(client))
