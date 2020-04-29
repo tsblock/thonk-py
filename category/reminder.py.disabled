@@ -67,7 +67,7 @@ class Reminder(commands.Cog):
         )
         await ctx.send(embed=success_embed)
 
-    @tasks.loop(seconds=30.0)
+    @tasks.loop(seconds=10.0)
     async def reminder_loop(self):
         documents = reminder.RemindListDocument.objects()
         for document in documents:

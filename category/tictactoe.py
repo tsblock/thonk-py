@@ -36,7 +36,7 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
         else:
             initial_game_board_embed = discord.Embed(
                 color=discord.Color.blue(),
-                title="{} vs {}".format(ctx.message.author.name, target_player.name),
+                title="{} vs {}\nReact with ⛔ to cancel the game".format(ctx.message.author.name, target_player.name),
             )
             self.game_list[ctx.channel.id] = TictactoeGame(player1, player2)  # add a instance of a game to game list
             initial_game_board_embed.description = str(self._get_game_from_list(ctx.channel.id))
@@ -56,7 +56,6 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
                 if user.id == self.game_list[message.channel.id].player1 or user.id == self.game_list[
                     message.channel.id].player2:
                     self.game_list.pop(message.channel.id, None)
-                    await message.delete()
                     await message.channel.send("Game cancelled!")
                 elif user.id != self.client.user.id:
                     await reaction.remove(user)
@@ -67,12 +66,10 @@ class Tictactoe(commands.Cog, name="Tic tac toe"):
                     if self.game_list[message.channel.id][index] == "🔲":
                         self.game_list[message.channel.id].place(index)
                         if self.game_list[message.channel.id].check_for_win():
-                            await message.delete()
                             await message.channel.send("{} wins! Congratulations. :tada:".format(
                                 self.client.get_user(self.game_list[message.channel.id].winner).mention))
                             self.game_list.pop(message.channel.id, None)
                         elif self.game_list[message.channel.id].check_for_draw():
-                            await message.delete()
                             await message.channel.send("It's a draw!")
                             self.game_list.pop(message.channel.id, None)
                         else:
