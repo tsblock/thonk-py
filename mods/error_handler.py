@@ -16,7 +16,7 @@ class error_handler(commands.Cog):
         elif isinstance(error, commands.NotOwner):
             await ctx.channel.send(
                 embed=funcs.errorEmbed("Insufficient permission", "Only bot owner can use this command."))
-        elif isinstance(error, commands.BadArgument):
+        elif isinstance(error, commands.UserInputError):
             await ctx.send(embed=funcs.errorEmbed("Invalid arguments!",
                                                   "Correct usage: {}{} {}".format(self.client.command_prefix,
                                                                                   ctx.command.name,
