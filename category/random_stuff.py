@@ -4,7 +4,9 @@ import time
 import discord
 import httpx
 from discord.ext import commands
+from googleapiclient.discovery import build
 
+import config
 from utils import funcs
 
 
@@ -112,6 +114,25 @@ class RandomStuff(commands.Cog, name="Random stuff"):
 
                 await ctx.send("**WPM:** {}\n"
                                "**Accuracy: ** {}%".format(wpm, accuracy))
+
+    @commands.command(name="google", description="Perform Google search with the bot.", usage="<search term>")
+    # @commands.cooldown(1, 10, commands.BucketType.channel)
+    async def google(self, ctx, *, term):
+        await ctx.trigger_typing()
+        query_service = build("customsearch",
+                              "v1",
+                              developerKey=config.google_api_key)
+        query_results = query_service.cse().list(q=term,
+                                                 cx=config.google_cse_id, ).execute()
+        results = query_results["items"]
+        result_embed = discord.Embed(
+            title="Google Search Results",
+            color=discord.Color.blue()
+        )
+        for i in range(0, 5):
+            result_embed.add_field(name="**{}. {}**".format(i + 1, results[i]["title"]), value=results[i]["link"],
+                                   inline=False)
+        await ctx.send(embed=result_embed)
 
 
 def setup(client):
