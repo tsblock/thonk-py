@@ -86,14 +86,16 @@ class Administrator(commands.Cog, name="Administrator"):
         if not config.production:
             await ctx.send("press shift+f9 in your pycharm you dumb fuck")
         else:
-            await ctx.send("restarting soon, say anything to confirm, say yes if you want git pull too")
+            await ctx.send("restarting soon, say anything to confirm, say git pull to git pull")
             try:
-                msg = await self.client.wait_for("message", check=lambda x: x.author.id == ctx.author.id, timeout=5.0)
+                msg = await self.client.wait_for("message",
+                                                 check=lambda x: x.author.id == ctx.author.id,
+                                                 timeout=5.0)
             except asyncio.TimeoutError:
                 await ctx.send("no confirmation bye")
             else:
                 await ctx.send("k")
-                if msg.content == "yes":
+                if msg.content == "git pull":
                     output = subprocess.check_output(["git", "pull"])
                     await ctx.send("```{}```".format(output))
                 sys.exit()
