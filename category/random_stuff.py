@@ -116,7 +116,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
                                "**Accuracy: ** {}%".format(wpm, accuracy))
 
     @commands.command(name="google", description="Perform Google search with the bot.", usage="<search term>")
-    # @commands.cooldown(1, 10, commands.BucketType.channel)
+    @commands.cooldown(1, 10, commands.BucketType.channel)
     async def google(self, ctx, *, term):
         await ctx.trigger_typing()
         query_service = build("customsearch",
