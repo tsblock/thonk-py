@@ -1,9 +1,11 @@
 from typing import Dict, List
 
-import discord
+import youtube_dl
 from discord.ext import commands
 
 from utils import funcs
+
+ytdl = youtube_dl.YoutubeDL()
 
 
 class Music(commands.Cog, name="Music"):
@@ -19,20 +21,6 @@ class Music(commands.Cog, name="Music"):
             return
 
     async def init(self, ctx, url):
-        pass
-
-
-class SongEntry(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data):
-        super().__init__(source, volume=0.5)
-
-        self.data = data  # youtube video data
-
-        self.title = data.get("title")
-        self.url = data.get("url")
-
-    @classmethod
-    async def getPCMAudio(cls, url):
         pass
 
 
