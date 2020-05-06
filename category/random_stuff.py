@@ -30,9 +30,10 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.command(name="dadjoke", description="Shows a random dad joke", aliases=["pun", "puns"])
     async def dadjoke(self, ctx):
         header = {"Accept": "text/plain"}
-        r = await httpx.get("https://icanhazdadjoke.com", headers=header)
-        if r.status_code == 200:
-            await ctx.channel.send(r.text)
+        async with httpx.AsyncClient as client:
+            r = await client.get("https://icanhazdadjoke.com", headers=header)
+            if r.status_code == 200:
+                await ctx.channel.send(r.text)
 
     @commands.cooldown(1, 5, commands.BucketType.default)
     @commands.command(name="catfact", description="Shows a random cat fact")
@@ -77,9 +78,8 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             if example:
                 urban_embed.add_field(name="Example", value=example)
             urban_embed.set_footer(text="👍 {} | 👎 {} | By: {}".format(str(thumbs_up), str(thumbs_down), author))
-            msg = await ctx.channel.send(embed=urban_embed)
-            # await msg.add_reaction("◀")
-            # await msg.add_reaction("▶")
+            await ctx.channel.send(embed=urban_embed)
+            # TODO: add reaction menu
 
     @commands.command(name="wpm", description="Test your typing speed.")
     @commands.cooldown(1, 10, commands.BucketType.user)

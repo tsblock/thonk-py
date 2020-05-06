@@ -45,12 +45,12 @@ class Administrator(commands.Cog, name="Administrator"):
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
         result = (await eval(f"{fn_name}()", env))
-        successEmbed = discord.Embed(
+        success_embed = discord.Embed(
             title="{} Code executed successfully".format(emotes.emotes["tick"]),
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
-        await ctx.channel.send(embed=successEmbed)
+        await ctx.channel.send(embed=success_embed)
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()
@@ -72,7 +72,7 @@ class Administrator(commands.Cog, name="Administrator"):
         else:
             await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
             try:
-                msg = await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
+                await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
             except asyncio.TimeoutError:
                 await ctx.send("lol pussy")
             else:
