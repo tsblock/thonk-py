@@ -1,4 +1,4 @@
-class TictactoeGame():
+class TictactoeGame:
     cross = "❌"
     circle = "⭕"
     empty = "🔲"
