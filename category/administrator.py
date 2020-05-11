@@ -97,6 +97,7 @@ class Administrator(commands.Cog, name="Administrator"):
                 await ctx.send("k")
                 if msg.content == "git pull":
                     output = subprocess.check_output(["git", "pull"])
+                    output = output.decode("string_escape")
                     await ctx.send("```{}```".format(output))
                 sys.exit()
 
