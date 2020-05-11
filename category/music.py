@@ -30,10 +30,11 @@ ffmpeg_options = {
 ytdl = youtube_dl.YoutubeDL(ytdl_options)
 
 
+# TODO: implement playlist import
 class Music(commands.Cog, name="Music"):
     def __init__(self, client):
         self.client = client
-        self.queue = Dict[int, List[YTDLSource]]
+        self.queue = Dict[int, List[QueueEntry]]
 
     @commands.command(name="play", usage="<youtube url> / <search term>")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -42,6 +43,16 @@ class Music(commands.Cog, name="Music"):
             await ctx.send(embed=funcs.errorEmbed(None, "Please connect to a voice channel."))
             return
 
+    def check_url(self, url):
+        pass
+
+
+class QueueEntry():
+    def __init__(self, url):
+        self.url = url
+
+        # get video info
+
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -49,10 +60,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         self.data = data
 
-        # video info
-        self.title = data.get("title")
-        self.url = data.get("url")
         self.length = data.get("duration")
+        self.progress = 0
 
     @classmethod
     async def from_url(cls, url, *, event_loop=None, stream=False):
@@ -61,10 +70,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         if 'entries' in data:
             # take first item from a playlist
-            # TODO: implement playlist import
-            data = data['entries'][0]
+            data = data["entries"][0]
 
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        filename = data["url"] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
