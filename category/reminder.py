@@ -48,7 +48,9 @@ class Reminder(commands.Cog):
         reminder.add(ctx.author.id, new_remind)
         remind_embed = discord.Embed(
             color=discord.Color.from_rgb(255, 255, 0),
-            description="👌 I will remind you at `{} UTC`".format(str(date))
+            description="👌 I will remind you at `{} UTC`\n\n"
+                        "⚠ **Reminder might be unreliable, use it at your own risk!**\n"
+                        "**This might be fixed soon\™**".format(str(date))
         )
         await ctx.send(embed=remind_embed)
 
@@ -67,6 +69,7 @@ class Reminder(commands.Cog):
         )
         await ctx.send(embed=success_embed)
 
+    # FIXME this loop sometimes stops working for no reason
     @tasks.loop(seconds=10.0)
     async def reminder_loop(self):
         documents = reminder.RemindListDocument.objects()
