@@ -14,7 +14,7 @@ class Reminder(commands.Cog):
         self.reminder_loop.start()
 
     @commands.command(name="remindlist", description="List your reminders", aliases=["rlist"])
-    # @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def remind_list(self, ctx):
         target_document = reminder.get(ctx.author.id)
         list_embed = discord.Embed(
