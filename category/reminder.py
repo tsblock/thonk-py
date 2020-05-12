@@ -33,7 +33,8 @@ class Reminder(commands.Cog):
 
     @commands.command(name="remindme", description="Remind you things I guess.",
                       usage="\"<date>\" <text>\n"
-                            "For the date argument, take a look at https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/\n"
+                            "For the date argument, take a look at "
+                            "https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/\n"
                             "You MUST put quote in between the date argument!",
                       aliases=["remind"])
     @commands.cooldown(5, 60, commands.BucketType.user)
