@@ -21,7 +21,7 @@ client.remove_command("help")
 @client.event
 async def on_ready():
     print("Ready!")
-    presence = discord.Activity(name="for {}".format(client.command_prefix), type=discord.ActivityType.watching)
+    presence = discord.Activity(name="for {}help".format(client.command_prefix), type=discord.ActivityType.watching)
     await client.change_presence(status=discord.Status.online, activity=presence)
     await read_restart_indicator()
 
