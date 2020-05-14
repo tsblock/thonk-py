@@ -1,5 +1,6 @@
 import ast
 import asyncio
+import subprocess
 import sys
 
 import discord
@@ -50,6 +51,21 @@ class Administrator(commands.Cog, name="Administrator"):
             description="```xl\n{}```".format(result)
         )
         await ctx.channel.send(embed=success_embed)
+
+    @commands.command(name="exec", description="Execute terminal command")
+    @commands.is_owner()
+    async def exec(self, ctx, *, cmd):
+        await ctx.message.add_reaction(emotes.emotes["loading"])
+        cmd_str_array = cmd.split(" ")
+        output = subprocess.call(cmd_str_array)
+        # output = output.decode("unicode_escape")
+        success_embed = discord.Embed(
+            title="{}".format(emotes.emotes["tick"]),
+            color=discord.Color.green(),
+            description="```xl\n{}```".format(output)
+        )
+        await ctx.message.clear_reaction(emotes.emotes["loading"])
+        await ctx.send(embed=success_embed)
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()
