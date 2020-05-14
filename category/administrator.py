@@ -1,6 +1,5 @@
 import ast
 import asyncio
-import subprocess
 import sys
 
 import discord
@@ -16,7 +15,7 @@ class Administrator(commands.Cog, name="Administrator"):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="eval", description="too lazy")
+    @commands.command(name="eval", description="execute python command")
     @commands.is_owner()
     async def eval(self, ctx, *, code):
         # credit: https://gist.github.com/nitros12/2c3c265813121492655bc95aa54da6b9
@@ -46,7 +45,7 @@ class Administrator(commands.Cog, name="Administrator"):
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
         result = (await eval(f"{fn_name}()", env))
         success_embed = discord.Embed(
-            title="{} Code executed successfully".format(emotes.emotes["tick"]),
+            title="{}".format(emotes.emotes["tick"]),
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
@@ -57,7 +56,7 @@ class Administrator(commands.Cog, name="Administrator"):
     async def say(self, ctx, *arg):
         await ctx.channel.send(" ".join(arg))
 
-    @commands.command(name="hack", description="hack into the nsa server so you get FREE MOnEY!!!!")
+    @commands.command(name="hack", description="hack into the nsa so you get FREE MOnEY!!!!")
     @commands.is_owner()
     async def hack(self, ctx, amount: int):
         member = ctx.author.id
@@ -83,23 +82,19 @@ class Administrator(commands.Cog, name="Administrator"):
     @commands.command(name="restart", description="restart the bot")
     @commands.is_owner()
     async def restart(self, ctx):
-        if not config.production:
-            await ctx.send("press shift+f9 in your pycharm you dumb fuck")
+        await ctx.send("✅❓")
+        try:
+            msg = await self.client.wait_for("message",
+                                             check=lambda m: (m.author.id == ctx.author.id and m.content == "yes"),
+                                             timeout=5.0)
+        except asyncio.TimeoutError:
+            await ctx.message.delete()
         else:
-            await ctx.send("restarting soon, say anything to confirm, say git pull to git pull")
-            try:
-                msg = await self.client.wait_for("message",
-                                                 check=lambda x: x.author.id == ctx.author.id,
-                                                 timeout=5.0)
-            except asyncio.TimeoutError:
-                await ctx.send("no confirmation bye")
-            else:
-                await ctx.send("k")
-                if msg.content == "git pull":
-                    output = subprocess.check_output(["git", "pull"])
-                    output = output.decode("unicode_escape")
-                    await ctx.send("```{}```".format(output))
-                sys.exit()
+            await msg.add_reaction(str(emotes.emotes["loading"]))
+            restart_indicator = open("restart_indicator", "w+")
+            restart_indicator.write("{}:{}".format(msg.channel.id, msg.id))
+            restart_indicator.close()
+            sys.exit()
 
 
 def setup(client):
