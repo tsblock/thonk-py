@@ -57,8 +57,8 @@ class Administrator(commands.Cog, name="Administrator"):
     async def exec(self, ctx, *, cmd):
         await ctx.message.add_reaction(emotes.emotes["loading"])
         cmd_str_array = cmd.split(" ")
-        output = subprocess.call(cmd_str_array)
-        # output = output.decode("unicode_escape")
+        output = subprocess.check_output(cmd_str_array)
+        output = output.decode("unicode_escape")
         success_embed = discord.Embed(
             title="{}".format(emotes.emotes["tick"]),
             color=discord.Color.green(),
