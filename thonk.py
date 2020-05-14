@@ -8,7 +8,7 @@ import config
 from utils.emotes import emotes
 
 # connect to database
-connect("thonk", host=config.mongodb_url, alias="thonk")
+connect("thonk", host=config.mongodb_url)
 
 prefix = "t."
 if not config.production:
