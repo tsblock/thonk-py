@@ -6,6 +6,7 @@ import httpx
 from discord.ext import commands
 
 from utils import funcs
+from utils.emotes import emotes
 
 
 class Utility(commands.Cog, name="Utility"):
@@ -42,13 +43,13 @@ class Utility(commands.Cog, name="Utility"):
     @commands.command(name="wpm", description="Test your typing speed.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def wpm(self, ctx):
-        info_msg = await ctx.send("Getting an extract from Wikipedia...")
-        await ctx.trigger_typing()
+        await ctx.message.add_reaction(emotes["loading"])
         async with httpx.AsyncClient() as client:
             res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
             full_extract = res.json()["extract"].split()[:49]
             extract = " ".join(full_extract)
-        await info_msg.edit(content=extract.replace(" ", " ឵឵឵"))
+        await ctx.send(content=extract.replace(" ", " ឵឵឵"))
+        await ctx.message.clear_reaction(emotes["loading"])
         start_time = time.time()
         try:
             msg = await self.client.wait_for("message", timeout=120.0, check=lambda
@@ -57,9 +58,7 @@ class Utility(commands.Cog, name="Utility"):
             await ctx.send("Times out! Type faster next time.")
         else:
             input_text = msg.content
-            if "឵឵឵" in input_text:
-                await ctx.send("Lol cheater.")
-            else:
+            if "឵឵឵" not in input_text:
                 end_time = time.time()
                 delta_time = end_time - start_time
                 count = 0
