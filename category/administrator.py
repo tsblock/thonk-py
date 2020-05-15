@@ -57,15 +57,26 @@ class Administrator(commands.Cog, name="Administrator"):
     async def exec(self, ctx, *, cmd):
         await ctx.message.add_reaction(emotes.emotes["loading"])
         cmd_str_array = cmd.split(" ")
-        output = subprocess.check_output(cmd_str_array)
-        output = output.decode("unicode_escape")
-        success_embed = discord.Embed(
-            title="{}".format(emotes.emotes["tick"]),
-            color=discord.Color.green(),
-            description="```xl\n{}```".format(output)
-        )
-        await ctx.message.clear_reaction(emotes.emotes["loading"])
-        await ctx.send(embed=success_embed)
+        try:
+            output = subprocess.check_output(cmd_str_array)
+            output = output.decode("unicode_escape")
+        except subprocess.CalledProcessError as err:
+            output = err.output.decode("unicode_escape")
+            error_embed = discord.Embed(
+                title="{}".format(emotes.emotes["cross"]),
+                color=discord.Color.red(),
+                description="```xl\n{}```".format(output)
+            )
+            await ctx.send(embed=error_embed)
+        else:
+            success_embed = discord.Embed(
+                title="{}".format(emotes.emotes["tick"]),
+                color=discord.Color.green(),
+                description="```xl\n{}```".format(output)
+            )
+            await ctx.send(embed=success_embed)
+        finally:
+            await ctx.message.clear_reaction(emotes.emotes["loading"])
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()
