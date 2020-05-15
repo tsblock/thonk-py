@@ -14,7 +14,7 @@ class Reminder(commands.Cog):
         self.reminder_loop.start()
 
     @commands.command(name="remindlist", description="List your reminders", aliases=["rlist"])
-    # @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def remind_list(self, ctx):
         target_document = reminder.get(ctx.author.id)
         list_embed = discord.Embed(
@@ -32,8 +32,9 @@ class Reminder(commands.Cog):
         await ctx.send(embed=list_embed)
 
     @commands.command(name="remindme", description="Remind you things I guess.",
-                      usage="\"<date>\" [repeat? true/false] <text>\n"
-                            "For the date argument, take a look at https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/\n"
+                      usage="\"<date>\" <text>\n"
+                            "For the date argument, take a look at "
+                            "https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/\n"
                             "You MUST put quote in between the date argument!",
                       aliases=["remind"])
     @commands.cooldown(5, 60, commands.BucketType.user)
