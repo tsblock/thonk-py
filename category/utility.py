@@ -55,12 +55,15 @@ class Utility(commands.Cog, name="Utility"):
             msg = await self.client.wait_for("message", timeout=120.0, check=lambda
                 x: x.channel.id == ctx.channel.id and x.author.id == ctx.author.id)
         except asyncio.TimeoutError:
-            await ctx.send("Times out! Type faster next time.")
+            await ctx.send("⏰ Times out! Type faster next time.")
         else:
             input_text = msg.content
             if "឵឵឵" not in input_text:
                 end_time = time.time()
                 delta_time = end_time - start_time
+                if (len(extract) * 0.2) > len(input_text):
+                    await ctx.send(embed=funcs.errorEmbed(None, "You have made too many errors!"))
+                    return
                 count = 0
                 for i, c in enumerate(extract):
                     if input_text[i] == c:
