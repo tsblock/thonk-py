@@ -1,5 +1,6 @@
 import asyncio
 import time
+from difflib import SequenceMatcher
 
 import discord
 import httpx
@@ -59,20 +60,26 @@ class Utility(commands.Cog, name="Utility"):
         else:
             input_text = msg.content
             if "឵឵឵" not in input_text:
-                end_time = time.time()
-                delta_time = end_time - start_time
-                if (len(extract) * 0.2) > len(input_text):
+                if similar(extract, input_text) < 0.5:
                     await ctx.send(embed=funcs.error_embed(None, "You have made too many errors!"))
                     return
+                end_time = time.time()
+                delta_time = end_time - start_time
                 count = 0
                 for i, c in enumerate(extract):
                     if input_text[i] == c:
                         count += 1
+                    else:
+                        continue
                 accuracy = round(count / len(extract) * 100, 2)
                 wpm = round(len(input_text) * 60 / (5 * delta_time), 2)
 
                 await ctx.send("**WPM:** {}\n"
                                "**Accuracy: ** {}%".format(wpm, accuracy))
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def setup(client):
