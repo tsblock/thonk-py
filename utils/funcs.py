@@ -6,7 +6,7 @@ import httpx
 from utils.emotes import emotes
 
 
-def errorEmbed(error_title, message):
+def error_embed(error_title, message):
     if error_title is None:
         error_title = "Error!"
     embed = discord.Embed(

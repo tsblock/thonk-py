@@ -43,7 +43,7 @@ class Reminder(commands.Cog):
         time_struct, parse_status = cal.parse(date_text, datetime.utcnow())
         date = datetime(*time_struct[:6])
         if parse_status == 0:
-            await ctx.send(embed=funcs.errorEmbed(None, "Please enter a valid date option!"))
+            await ctx.send(embed=funcs.error_embed(None, "Please enter a valid date option!"))
             return
         new_remind = reminder.RemindDocument(remind_text=remind_text, remind_date=date)
         reminder.add(ctx.author.id, new_remind)
@@ -61,7 +61,7 @@ class Reminder(commands.Cog):
     async def remind_delete(self, ctx, reminder_id: int):
         target_document = reminder.get(ctx.author.id)
         if reminder_id > len(target_document.reminds):
-            await ctx.send(embed=funcs.errorEmbed(None, "Reminder does not exist!"))
+            await ctx.send(embed=funcs.error_embed(None, "Reminder does not exist!"))
             return
         reminder.remove(ctx.author.id, reminder_id)
         success_embed = discord.Embed(

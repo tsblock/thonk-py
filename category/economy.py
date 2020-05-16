@@ -1,7 +1,7 @@
+import random
 from datetime import datetime, timedelta
 
 import discord
-import random
 from discord.ext import commands
 
 from database import economy
@@ -34,13 +34,13 @@ class Economy(commands.Cog, name="Economy"):
         self_document = economy.get(ctx.author.id)
         self_balance = self_document.balance
         if self_balance < amount:
-            await ctx.send(embed=funcs.errorEmbed(None, "You don't have enough money!"))
+            await ctx.send(embed=funcs.error_embed(None, "You don't have enough money!"))
             return
         if ctx.author.id == target_member.id:
-            await ctx.send(embed=funcs.errorEmbed(None, "You can't pay to yourself..."))
+            await ctx.send(embed=funcs.error_embed(None, "You can't pay to yourself..."))
             return
         if amount <= 0:
-            await ctx.send(embed=funcs.errorEmbed(None, "What are you doing?"))
+            await ctx.send(embed=funcs.error_embed(None, "What are you doing?"))
             return
         economy.add(ctx.author.id, -amount)
         economy.add(target_member.id, amount)
@@ -86,9 +86,9 @@ class Economy(commands.Cog, name="Economy"):
             await ctx.send(embed=success_embed)
         else:
             time_left = next_daily - present
-            failed_embed = funcs.errorEmbed(None, funcs.format_timedelta(time_left, "Come back later in: {days} day, "
-                                                                                    "{hours} hour, {minutes} minutes, "
-                                                                                    "{seconds} seconds"))
+            failed_embed = funcs.error_embed(None, funcs.format_timedelta(time_left, "Come back later in: {days} day, "
+                                                                                     "{hours} hour, {minutes} minutes, "
+                                                                                     "{seconds} seconds"))
             await ctx.send(embed=failed_embed)
 
     @commands.command(name="gamble", description="Pure gambling lol, 50% chance of winning.")
@@ -97,10 +97,10 @@ class Economy(commands.Cog, name="Economy"):
         self_document = economy.get(ctx.author.id)
         self_balance = self_document.balance
         if self_balance < amount:
-            await ctx.send(embed=funcs.errorEmbed(None, "You don't have enough money!"))
+            await ctx.send(embed=funcs.error_embed(None, "You don't have enough money!"))
             return
         if amount <= 0:
-            await ctx.send(embed=funcs.errorEmbed(None, "What are you doing?"))
+            await ctx.send(embed=funcs.error_embed(None, "What are you doing?"))
             return
         luck = random.randrange(0, 100)
         if luck >= 50:
@@ -131,16 +131,16 @@ class Economy(commands.Cog, name="Economy"):
         target_document = economy.get(target_member.id)
         target_balance = target_document.balance
         if self_balance < amount:
-            await ctx.send(embed=funcs.errorEmbed(None, "You don't have enough money!"))
+            await ctx.send(embed=funcs.error_embed(None, "You don't have enough money!"))
             return
         if amount <= 0:
-            await ctx.send(embed=funcs.errorEmbed(None, "What are you doing?"))
+            await ctx.send(embed=funcs.error_embed(None, "What are you doing?"))
             return
         if target_balance < amount:
-            await ctx.send(embed=funcs.errorEmbed(None, "The user you tried to rob does not have enough money!"))
+            await ctx.send(embed=funcs.error_embed(None, "The user you tried to rob does not have enough money!"))
             return
         if ctx.author.id == target_member.id:
-            await ctx.send(embed=funcs.errorEmbed(None, "I would love to see how you rob yourself."))
+            await ctx.send(embed=funcs.error_embed(None, "I would love to see how you rob yourself."))
             return
         luck = random.randrange(1, 100)
         # TODO: increase the chance when bank system is done

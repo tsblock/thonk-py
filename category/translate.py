@@ -21,9 +21,9 @@ class Translate(commands.Cog, name="Google Translate"):
     @commands.cooldown(1, 10)
     async def translate(self, ctx, dest=None, *, msg=None):
         if dest not in constants.LANGUAGES.keys():
-            await ctx.send(embed=funcs.errorEmbed(None, "Invalid language code! Please check "
-                                                  "https://github.com/ssut/py-googletrans/blob/master/googletrans"
-                                                  "/constants.py for the list of valid language code."))
+            await ctx.send(embed=funcs.error_embed(None, "Invalid language code! Please check "
+                                                         "https://github.com/ssut/py-googletrans/blob/master/googletrans"
+                                                         "/constants.py for the list of valid language code."))
         else:
             await ctx.trigger_typing()
             res = self.translator.translate(msg, dest=dest)

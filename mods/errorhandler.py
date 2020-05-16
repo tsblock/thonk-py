@@ -11,19 +11,19 @@ class ErrorHandler(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.channel.send(
-                embed=funcs.errorEmbed("Hey! Calm down.",
-                                       "Try again in {} seconds".format(round(error.retry_after, 2))))
+                embed=funcs.error_embed("Hey! Calm down.",
+                                        "Try again in {} seconds".format(round(error.retry_after, 2))))
         elif isinstance(error, commands.NotOwner):
             await ctx.channel.send(
-                embed=funcs.errorEmbed("Insufficient permission", "Only bot owner can use this command."))
+                embed=funcs.error_embed("Insufficient permission", "Only bot owner can use this command."))
         elif isinstance(error, commands.UserInputError):
-            await ctx.send(embed=funcs.errorEmbed("Invalid arguments!",
-                                                  "Correct usage: {}{} {}".format(self.client.command_prefix,
-                                                                                  ctx.command.name,
-                                                                                  ctx.command.usage)))
+            await ctx.send(embed=funcs.error_embed("Invalid arguments!",
+                                                   "Correct usage: {}{} {}".format(self.client.command_prefix,
+                                                                                   ctx.command.name,
+                                                                                   ctx.command.usage)))
         elif isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(embed=funcs.errorEmbed(None,
-                                                  "You can not use this command in private message."))
+            await ctx.send(embed=funcs.error_embed(None,
+                                                   "You can not use this command in private message."))
 
 
 def setup(client):

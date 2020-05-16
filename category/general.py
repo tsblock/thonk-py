@@ -63,7 +63,7 @@ class General(commands.Cog, name="General"):
                 await ctx.channel.send(embed=cmd_embed)
 
             else:
-                error_embed = funcs.errorEmbed(None, "Command doesn't exist")
+                error_embed = funcs.error_embed(None, "Command doesn't exist")
                 await ctx.channel.send(embed=error_embed)
 
     @commands.command(name="invite", description="Shows the invite of this bot")

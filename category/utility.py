@@ -22,7 +22,7 @@ class Utility(commands.Cog, name="Utility"):
         data = res.json()["list"]
         await ctx.trigger_typing()
         if len(data) == 0:
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "Term does not exist."))
+            await ctx.channel.send(embed=funcs.error_embed(None, "Term does not exist."))
         else:
             urban_embed = discord.Embed(
                 color=discord.Color.from_rgb(255, 255, 0),
@@ -62,7 +62,7 @@ class Utility(commands.Cog, name="Utility"):
                 end_time = time.time()
                 delta_time = end_time - start_time
                 if (len(extract) * 0.2) > len(input_text):
-                    await ctx.send(embed=funcs.errorEmbed(None, "You have made too many errors!"))
+                    await ctx.send(embed=funcs.error_embed(None, "You have made too many errors!"))
                     return
                 count = 0
                 for i, c in enumerate(extract):
