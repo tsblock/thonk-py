@@ -51,7 +51,7 @@ class Economy(commands.Cog, name="Economy"):
         )
         await ctx.send(embed=pay_embed)
 
-    @commands.command(name="daily", description="Claim daily reward")
+    @commands.command(name="daily", description="Claim daily reward", alias=["d"])
     @commands.cooldown(3, 10, commands.BucketType.user)
     async def daily(self, ctx):
         self_document = economy.get(ctx.author.id)
