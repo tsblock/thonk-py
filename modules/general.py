@@ -32,8 +32,8 @@ class General(commands.Cog, name="General"):
                 color=discord.Color.from_rgb(255, 255, 0),
             )
             list_embed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
-            for cogs in self.client.cogs:  # loop through each category
-                if len(self.client.get_cog(cogs).get_commands()) == 0:  # hacky way to skip handlers
+            for cogs in self.client.cogs:  # loop through each modules
+                if len(self.client.get_cog(cogs).get_commands()) == 0:
                     continue
                 cmd_list = ""
                 for cmd_name in self.client.get_cog(cogs).get_commands():
