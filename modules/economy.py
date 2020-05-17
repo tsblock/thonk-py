@@ -181,7 +181,7 @@ class Economy(commands.Cog, name="Economy"):
         )
         index = 0
         for document in doc_list:
-            member_name = str(self.client.get_user(document.user_id))
+            member_name = self.client.get_user(document.user_id).name
             balance = document.balance
             index += 1
             leaderboard_embed.description += "**{}.** **{}** ${}\n".format(index, member_name, balance)
