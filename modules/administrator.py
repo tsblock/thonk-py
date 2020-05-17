@@ -50,6 +50,8 @@ class Administrator(commands.Cog, name="Administrator"):
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
+        if len(result) >= 2000:
+            success_embed.description = await funcs.upload_text(result)
         await ctx.channel.send(embed=success_embed)
 
     @commands.command(name="exec", description="Execute terminal command")
@@ -74,6 +76,8 @@ class Administrator(commands.Cog, name="Administrator"):
                 color=discord.Color.green(),
                 description="```xl\n{}```".format(output)
             )
+            if len(output) >= 2000:
+                success_embed.description = await funcs.upload_text(output)
             await ctx.send(embed=success_embed)
         finally:
             await ctx.message.clear_reaction(emotes.emotes["loading"])
