@@ -44,14 +44,14 @@ class Administrator(commands.Cog, name="Administrator"):
             'emotes': emotes
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
-        result = (await eval(f"{fn_name}()", env))
+        result = str((await eval(f"{fn_name}()", env)))
         success_embed = discord.Embed(
             title="{}".format(emotes.emotes["tick"]),
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
         if len(result) >= 2000:
-            success_embed.description = await funcs.upload_text(result)
+            success_embed.description = await funcs.upload_text(str(result))
         await ctx.channel.send(embed=success_embed)
 
     @commands.command(name="exec", description="Execute terminal command")
