@@ -44,7 +44,6 @@ async def read_restart_indicator():
 for file in os.listdir("modules"):
     if file.endswith(".py"):
         client.load_extension(f"modules.{file[:-3]}")
-        print("Loaded module: {}".format(file[:-3]))
 
 
 client.run(config.token)
