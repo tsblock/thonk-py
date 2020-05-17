@@ -31,11 +31,11 @@ class Reminder(commands.Cog):
                 index += 1
         await ctx.send(embed=list_embed)
 
-    @commands.command(name="remindme", description="Remind you things I guess.",
+    @commands.command(name="remindme", description="Create a reminder.",
                       usage="\"<date>\" <text>\n"
                             "For the date argument, take a look at "
-                            "https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/\n"
-                            "You MUST put quote in between the date argument!",
+                            "[here](https://www.reddit.com/r/RemindMeBot/comments/2862bd/remindmebot_date_options/)\n"
+                            "You must put quote in between the date argument!",
                       aliases=["remind"])
     @commands.cooldown(5, 60, commands.BucketType.user)
     async def remindme(self, ctx, date_text: str, *, remind_text: str):

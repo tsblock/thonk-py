@@ -12,7 +12,7 @@ def error_embed(error_title, message):
     embed = discord.Embed(
         title="{} {}".format(emotes["cross"], error_title),
         color=discord.Color.red(),
-        description="`{}`".format(message)
+        description=message
     )
     return embed
 
