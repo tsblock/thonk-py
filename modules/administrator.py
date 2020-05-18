@@ -112,14 +112,14 @@ class Administrator(commands.Cog, name="Administrator"):
 
     @commands.command(name="restart", description="restart the bot")
     @commands.is_owner()
-    async def restart(self, ctx):
-        await ctx.send("✅❓")
+    async def restart(self, ctx, *force):
+        confirm_msg = await ctx.send("✅❓")
         try:
             msg = await self.client.wait_for("message",
                                              check=lambda m: (m.author.id == ctx.author.id and m.content == "yes"),
                                              timeout=5.0)
         except asyncio.TimeoutError:
-            await ctx.message.delete()
+            await confirm_msg.delete()
         else:
             await msg.add_reaction(str(emotes.emotes["loading"]))
             restart_indicator = open("restart_indicator", "w+")
