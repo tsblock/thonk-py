@@ -86,7 +86,7 @@ class Economy(commands.Cog, name="Economy"):
             await ctx.send(embed=success_embed)
         else:
             time_left = next_daily - present
-            failed_embed = funcs.error_embed(None, funcs.format_timedelta(time_left, "Come back later in: {days} day, "
+            failed_embed = funcs.error_embed(None, funcs.format_timedelta(time_left, "Come back later in: "
                                                                                      "{hours} hour, {minutes} minutes, "
                                                                                      "{seconds} seconds"))
             await ctx.send(embed=failed_embed)
