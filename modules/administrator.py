@@ -93,6 +93,7 @@ class Administrator(commands.Cog, name="Administrator"):
         if config.production:
             await ctx.send("cheating in production makes you a furry!!!!!!!!!!!!! "
                            "and dont you dare cheat with a database viewer")
+            return
         member = ctx.author.id
         economy.add(member, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
