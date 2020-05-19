@@ -90,6 +90,9 @@ class Administrator(commands.Cog, name="Administrator"):
     @commands.command(name="hack", description="hack into the nsa so you get FREE MOnEY!!!!")
     @commands.is_owner()
     async def hack(self, ctx, amount: int):
+        if config.production:
+            await ctx.send("cheating in production makes you a furry!!!!!!!!!!!!! "
+                           "and dont you dare cheat with a database viewer")
         member = ctx.author.id
         economy.add(member, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
@@ -99,16 +102,16 @@ class Administrator(commands.Cog, name="Administrator"):
     async def reset_eco(self, ctx):
         if config.production:
             await ctx.send("why you are doing this in production")
+            return
+        await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
+        try:
+            await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
+        except asyncio.TimeoutError:
+            await ctx.send("lol pussy")
         else:
-            await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
-            try:
-                await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
-            except asyncio.TimeoutError:
-                await ctx.send("lol pussy")
-            else:
-                for document in economy.EconomyDocument.objects:
-                    document.delete()
-                await ctx.send("Done! :)")
+            for document in economy.EconomyDocument.objects:
+                document.delete()
+            await ctx.send("Done! :)")
 
     @commands.command(name="restart", description="restart the bot")
     @commands.is_owner()
