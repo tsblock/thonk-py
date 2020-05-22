@@ -27,7 +27,7 @@ class Reminder(commands.Cog):
             index = 0
             for remind in target_document.reminds:
                 list_embed.add_field(name="**{}. ** `{}`".format(index, remind.remind_text),
-                                     value="Trigger time: `{}`".format(str(remind.remind_date)))
+                                     value="Trigger time: `{}`".format(str(remind.remind_date)), inline=False)
                 index += 1
         await ctx.send(embed=list_embed)
 
