@@ -51,7 +51,7 @@ class Reminder(commands.Cog):
             color=discord.Color.from_rgb(255, 255, 0),
             description="👌 I will remind you at `{} UTC`\n\n"
                         "⚠ **Reminder might be unreliable, use it at your own risk!**\n"
-                        "**This might be fixed soon\™**".format(str(date))
+                        "***This will not be fixed*** (for now)".format(str(date))
         )
         await ctx.send(embed=remind_embed)
 
