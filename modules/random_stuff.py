@@ -1,3 +1,5 @@
+import random
+
 import httpx
 from discord.ext import commands
 
@@ -49,6 +51,16 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         res = await funcs.simple_get_request("https://some-random-api.ml/img/birb")
         file = await funcs.get_image_from_url(str(res["link"]))
         await ctx.channel.send(file=file)
+
+    @commands.command(name="8ball", description="Ask 8ball something", aliases=["8b"], usage="<question>")
+    async def eight_ball(self, ctx, *, placeholder):
+        answers = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes – definitely.",
+                   "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.",
+                   "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.",
+                   "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.",
+                   "My sources say no.", "Outlook not so good.", "Very doubtful."]
+        answer = random.choice(answers)
+        await ctx.send("🎱: `{}`".format(answer))
 
 
 def setup(client):
