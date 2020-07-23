@@ -1,7 +1,9 @@
 import random
 
+import discord
 import httpx
 from discord.ext import commands
+from mcstatus import MinecraftServer
 
 from utils import funcs
 
@@ -61,6 +63,36 @@ class RandomStuff(commands.Cog, name="Random stuff"):
                    "My sources say no.", "Outlook not so good.", "Very doubtful."]
         answer = random.choice(answers)
         await ctx.send("🎱: `{}`".format(answer))
+
+    @commands.command(name="16craft", description="Get status of 16craft", aliases=["16"])
+    async def sixteen_craft(self, ctx):
+        await ctx.channel.trigger_typing()
+        server = MinecraftServer.lookup("16craft.serveminecraft.net:25565")
+        try:
+            status = server.status()
+        except ConnectionError:
+            error_embed = discord.Embed(
+                title="16Craft Status",
+                color=discord.Color.red(),
+                description="**Server is offline.**"
+            )
+            error_embed.set_thumbnail(url="https://eu.mc-api.net/v3/server/favicon/16craft.serveminecraft.net")
+            await ctx.send(embed=error_embed)
+        else:
+            status_embed = discord.Embed(
+                title="16Craft Status",
+                color=discord.Color.green(),
+            )
+            status_embed.set_thumbnail(url="https://eu.mc-api.net/v3/server/favicon/16craft.serveminecraft.net")
+            status_embed.set_footer(text="Server IP: 16craft.serveminecraft.net | Server Reddit: r/16Craft")
+
+            status_embed.add_field(name="Version", value=status.version.name.replace("Paper ", ""))
+            status_embed.add_field(name="Player Count", value=status.players.online)
+            players = []
+            for player in status.players.sample:
+                players.append(player.name)
+            status_embed.add_field(name="Players", value=" ".join(players))
+            await ctx.send(embed=status_embed)
 
 
 def setup(client):
