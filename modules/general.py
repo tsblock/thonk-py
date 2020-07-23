@@ -3,6 +3,7 @@ import time
 import discord
 from discord.ext import commands
 
+from database import guild_settings
 from utils import funcs
 from utils.emotes import emotes
 
@@ -85,6 +86,18 @@ class General(commands.Cog, name="General"):
         await ctx.send(embed=info_embed)
         pass
 
+    @commands.command(name="toggle_msg", description="Toggle response messages")
+    @commands.guild_only()
+    async def toggle_msg(self, ctx):
+        guild_setting = guild_settings.get(ctx.guild.id)
+        guild_setting.dumb_message = not guild_setting.dumb_message
+        guild_setting.save()
+        info_embed = discord.Embed(
+            description="{} Response messages are now {}".format(emotes["tick"],
+                                                                 "**on**" if guild_setting.dumb_message else "**off**"),
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=info_embed)
 
 def setup(client):
     client.add_cog(General(client))
