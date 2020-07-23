@@ -99,5 +99,6 @@ class General(commands.Cog, name="General"):
         )
         await ctx.send(embed=info_embed)
 
+
 def setup(client):
     client.add_cog(General(client))
