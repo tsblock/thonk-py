@@ -91,7 +91,8 @@ class RandomStuff(commands.Cog, name="Random stuff"):
             players = []
             for player in status.players.sample:
                 players.append(player.name)
-            status_embed.add_field(name="Players", value="`{}`".format(", ".join(players)))
+            if len(players) > 0:
+                status_embed.add_field(name="Players", value="`{}`".format(", ".join(players)))
             await ctx.send(embed=status_embed)
 
 
