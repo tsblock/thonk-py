@@ -13,7 +13,7 @@ class General(commands.Cog, name="General"):
         self.client = client
 
     @commands.command(name="ping",
-                      description="Shows latency of the bot, also for checking if the bot is responding")
+                      description="ping", aliases=["p"])
     async def ping(self, ctx):
         previous_time = int(round(time.time() * 1000))
         msg = await ctx.channel.send(emotes["thonkspin"])
