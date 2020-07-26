@@ -16,7 +16,7 @@ class AnimalCrossing(commands.Cog, name="Animal Crossing"):
         self.sea = json.load(open("assets/acnhsea.json", "r", encoding="utf8"))
         self.villagers = json.load(open("assets/acnhvillagers.json", "r", encoding="utf8"))
 
-    @commands.command(name="acnhbugs", description="Shows information about an Animal Crossing: New Horizons bug!",
+    @commands.command(name="acbugs", description="Shows information about an Animal Crossing: New Horizons bug!",
                       usage="<bug name>", aliases=["acb", "acnhb"])
     @commands.cooldown(5, 3, commands.BucketType.user)
     async def acbugs(self, ctx, *, bug):
