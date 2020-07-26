@@ -29,7 +29,7 @@ class Utility(commands.Cog, name="Utility"):
                 color=discord.Color.from_rgb(255, 255, 0),
                 title=term
             )
-            definition = data[0]["definition"].replace("[", "").replace("]", "")
+            definition = data[0]["definition"].replace("[", "").replace("]", "")[:2000] + "..."
             example = data[0]["example"].replace("[", "").replace("]", "")
             thumbs_up = data[0]["thumbs_up"]
             thumbs_down = data[0]["thumbs_down"]
