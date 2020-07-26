@@ -18,6 +18,7 @@ class AnimalCrossing(commands.Cog, name="Animal Crossing"):
 
     @commands.command(name="acnhbugs", description="Shows information about an Animal Crossing: New Horizons bug!",
                       usage="<bug name>", aliases=["acb", "acnhb"])
+    @commands.cooldown(5, 3, commands.BucketType.user)
     async def acbugs(self, ctx, *, bug):
         try:
             bugdata = self.bugs[bug.casefold().replace(" ", "_").replace("'", "").replace("‘", "").replace("’", "")]
@@ -51,6 +52,7 @@ class AnimalCrossing(commands.Cog, name="Animal Crossing"):
 
     @commands.command(name="acfish", description="Shows information about an Animal Crossing: New Horizons fish!",
                       usage="<fish name>", aliases=["acf", "acnhf"])
+    @commands.cooldown(5, 3, commands.BucketType.user)
     async def acfish(self, ctx, *, fish):
         try:
             fishdata = self.fish[fish.casefold().replace(" ", "_").replace("'", "").replace("‘", "").replace("’", "")]
@@ -87,6 +89,7 @@ class AnimalCrossing(commands.Cog, name="Animal Crossing"):
     @commands.command(name="acsea",
                       description="Shows information about an Animal Crossing: New Horizons sea creature!",
                       usage="<sea creature name>", aliases=["acs", "acnhs"])
+    @commands.cooldown(5, 3, commands.BucketType.user)
     async def acsea(self, ctx, *, sea):
         try:
             seadata = self.sea[sea.casefold().replace(" ", "_").replace("'", "").replace("‘", "").replace("’", "")]
@@ -118,6 +121,7 @@ class AnimalCrossing(commands.Cog, name="Animal Crossing"):
     @commands.command(name="acvillager",
                       description="Shows information about an Animal Crossing: New Horizons villagers!",
                       usage="<villager name>", aliases=["acv", "acnhv"])
+    @commands.cooldown(5, 3, commands.BucketType.user)
     async def acvillager(self, ctx, villager):
         # what the fuck is this ryan
         found = False
