@@ -15,7 +15,7 @@ class Utility(commands.Cog, name="Utility"):
         self.client = client
 
     @commands.command(name="urban", description="Urban Dictionary, but in Discord.", usage="<term>")
-    @commands.cooldown(1, 5, commands.BucketType.default)
+    @commands.cooldown(5, 5, commands.BucketType.default)
     async def urban(self, ctx, *, term):
         params = {"term": term}
         async with httpx.AsyncClient() as client:
