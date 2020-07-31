@@ -70,7 +70,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
         server = MinecraftServer.lookup("16craft.serveminecraft.net:25565")
         try:
             status = server.status()
-        except ConnectionError:
+        except Exception:
             error_embed = discord.Embed(
                 title="16Craft Status",
                 color=discord.Color.red(),
