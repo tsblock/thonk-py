@@ -6,6 +6,7 @@ import discord
 import httpx
 from discord.ext import commands
 
+import config
 from utils import funcs
 from utils.emotes import emotes
 
@@ -76,6 +77,68 @@ class Utility(commands.Cog, name="Utility"):
 
                 await ctx.send("**WPM:** {}\n"
                                "**Accuracy: ** {}%".format(wpm, accuracy))
+
+    # by ryancflam (https://github.com/ryancflam)
+    @commands.command(name="covid19", description="Check the current state of the coronavirus pandemic",
+                      usage="[city name]", aliases=["corona", "coronavirus", "cv"])
+    @commands.cooldown(5, 3, commands.BucketType.user)
+    async def covid(self, ctx, *, city):
+        headers = {"x-rapidapi-host": "corona-virus-world-and-india-data.p.rapidapi.com",
+                   "x-rapidapi-key": config.rapidapi_key}
+        async with httpx.AsyncClient()as session:
+            r = await session.get("https://corona-virus-world-and-india-data.p.rapidapi.com/api", headers=headers)
+            data = r.json()
+        total = data["countries_stat"]
+        found = False
+        if city == "":
+            total = data["world_total"]
+        else:
+            if city.casefold().startswith("united states") or city.casefold().startswith("america"):
+                city = "usa"
+            elif city.casefold().startswith("united kingdom") or city.casefold().startswith(
+                    "great britain") or city.casefold().startswith("britain") or city.casefold().startswith("england"):
+                city = "uk"
+            elif city.casefold().startswith("hk"):
+                city = "hong kong"
+            if city.casefold().startswith("korea") or city.casefold().startswith(
+                    "south korea") or city.casefold().startswith("sk"):
+                city = "S. Korea"
+            for x in total:
+                if x["country_name"].casefold().replace(".", "") == city.casefold().replace(".", ""):
+                    found = True
+                    break
+            if not found:
+                total = data["world_total"]
+            else:
+                total = x  # what
+        corona_embed = discord.Embed(color=discord.Color(0x23272A),
+                                     title=f"COVID-19 Stats ({total['country_name'] if found else 'Global'})",
+                                     description="Statistics taken at: " + data["statistic_taken_at"] + " UTC")
+        corona_embed.set_thumbnail(
+            url="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/SARS-CoV-2_without_background.png/220px-SARS-CoV-2_without_background.png")
+        if found:
+            corona_embed.add_field(name="Country", value=total["country_name"])
+            corona_embed.add_field(name="Total Cases", value=total["cases"])
+            corona_embed.add_field(name="Total Deaths", value=total[
+                                                                  "deaths"] + f"\n({round(int(total['deaths'].replace(',', '').replace('N/A', '0')) / int(total['cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+            corona_embed.add_field(name="Total Recovered", value=total[
+                                                                     "total_recovered"] + f"\n({round(int(total['total_recovered'].replace(',', '').replace('N/A', '0')) / int(total['cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+            corona_embed.add_field(name="Active Cases", value=total[
+                                                                  "active_cases"] + f"\n({round(int(total['active_cases'].replace(',', '').replace('N/A', '0')) / int(total['cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+            corona_embed.add_field(name="Critical Cases", value=total["serious_critical"])
+            corona_embed.add_field(name="Total Tests", value=total["total_tests"])
+        else:
+            corona_embed.add_field(name="Total Cases", value=total["total_cases"])
+            corona_embed.add_field(name="Total Deaths", value=total[
+                                                                  "total_deaths"] + f"\n({round(int(total['total_deaths'].replace(',', '').replace('N/A', '0')) / int(total['total_cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+            corona_embed.add_field(name="Total Recovered", value=total[
+                                                                     "total_recovered"] + f"\n({round(int(total['total_recovered'].replace(',', '').replace('N/A', '0')) / int(total['total_cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+            corona_embed.add_field(name="Active Cases", value=total[
+                                                                  "active_cases"] + f"\n({round(int(total['active_cases'].replace(',', '').replace('N/A', '0')) / int(total['total_cases'].replace(',', '').replace('N/A', '0')) * 100, 2)}%)")
+        corona_embed.add_field(name="New Cases Today", value=total["new_cases"])
+        corona_embed.add_field(name="New Deaths Today", value=total["new_deaths"])
+        corona_embed.set_footer(text="Note: The data provided may not be 100% accurate.")
+        await ctx.send(embed=corona_embed)
 
 
 def similar(a, b):
