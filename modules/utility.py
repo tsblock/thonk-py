@@ -8,7 +8,6 @@ from discord.ext import commands
 
 import config
 from utils import funcs
-from utils.emotes import emotes
 
 
 class Utility(commands.Cog, name="Utility"):
@@ -19,10 +18,10 @@ class Utility(commands.Cog, name="Utility"):
     @commands.cooldown(5, 5, commands.BucketType.default)
     async def urban(self, ctx, *, term):
         params = {"term": term}
+        await ctx.trigger_typing()
         async with httpx.AsyncClient() as client:
             res = await client.get("http://api.urbandictionary.com/v0/define", params=params)
         data = res.json()["list"]
-        await ctx.trigger_typing()
         if len(data) == 0:
             await ctx.channel.send(embed=funcs.error_embed(None, "Term does not exist."))
         else:
@@ -45,13 +44,12 @@ class Utility(commands.Cog, name="Utility"):
     @commands.command(name="wpm", description="Test your typing speed.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def wpm(self, ctx):
-        await ctx.message.add_reaction(emotes["loading"])
+        await ctx.trigger_typing()
         async with httpx.AsyncClient() as client:
             res = await client.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
             full_extract = res.json()["extract"].split()[:49]
             extract = " ".join(full_extract)
         await ctx.send(content=extract.replace(" ", " ឵឵឵"))
-        await ctx.message.clear_reaction(emotes["loading"])
         start_time = time.time()
         try:
             msg = await self.client.wait_for("message", timeout=120.0, check=lambda
@@ -85,6 +83,7 @@ class Utility(commands.Cog, name="Utility"):
     async def covid(self, ctx, *, city):
         headers = {"x-rapidapi-host": "corona-virus-world-and-india-data.p.rapidapi.com",
                    "x-rapidapi-key": config.rapidapi_key}
+        await ctx.trigger_typing()
         async with httpx.AsyncClient()as session:
             r = await session.get("https://corona-virus-world-and-india-data.p.rapidapi.com/api", headers=headers)
             data = r.json()
