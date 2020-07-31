@@ -41,10 +41,6 @@ class Weather(commands.Cog, name="Weather"):
         weather_embed.add_field(name="💧 Humidity", value="{}%".format(humidity))
         await ctx.send(embed=weather_embed)
 
-    # @commands.command(name="forecast", description="Get 5-day weather forecast", usage="<city name>")
-    # async def forecast(self, ctx, *, city_name):
-    #     pass
-
 
 async def get_current_weather_data(city_name):
     async with httpx.AsyncClient() as client:
