@@ -22,7 +22,7 @@ class Translate(commands.Cog, name="Google Translate"):
     async def translate(self, ctx, dest=None, *, msg=None):
         if dest not in constants.LANGUAGES.keys():
             await ctx.send(embed=funcs.error_embed(None, "Invalid language code! Please check "
-                                                         "[this page](https://github.com/ssut/py-googletrans/blob/master/googletrans/constants.py)"
+                                                         "[this page](https://gist.github.com/tsblock/6fe5977de3868a5b1fdb3d6e883bf228)"
                                                          " for the list of valid language code."))
         else:
             await ctx.trigger_typing()
