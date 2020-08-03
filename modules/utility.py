@@ -1,6 +1,7 @@
 import asyncio
 import time
 from difflib import SequenceMatcher
+from typing import Optional
 
 import discord
 import httpx
@@ -80,7 +81,7 @@ class Utility(commands.Cog, name="Utility"):
     @commands.command(name="covid19", description="Check the current state of the coronavirus pandemic",
                       usage="[city name]", aliases=["corona", "coronavirus", "cv"])
     @commands.cooldown(5, 3, commands.BucketType.user)
-    async def covid(self, ctx, *, city):
+    async def covid(self, ctx, *, city: Optional[str] = None):
         headers = {"x-rapidapi-host": "corona-virus-world-and-india-data.p.rapidapi.com",
                    "x-rapidapi-key": config.rapidapi_key}
         await ctx.trigger_typing()
@@ -89,7 +90,7 @@ class Utility(commands.Cog, name="Utility"):
             data = r.json()
         total = data["countries_stat"]
         found = False
-        if city == "":
+        if city is None:
             total = data["world_total"]
         else:
             if city.casefold().startswith("united states") or city.casefold().startswith("america"):
