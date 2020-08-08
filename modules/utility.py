@@ -1,10 +1,12 @@
 import asyncio
+import io
 import time
 from difflib import SequenceMatcher
 from typing import Optional
 
 import discord
 import httpx
+import qrcode
 from discord.ext import commands
 
 import config
@@ -139,6 +141,21 @@ class Utility(commands.Cog, name="Utility"):
         corona_embed.add_field(name="New Deaths Today", value=total["new_deaths"])
         corona_embed.set_footer(text="Note: The data provided may not be 100% accurate.")
         await ctx.send(embed=corona_embed)
+
+    @commands.command(name="qrcode", description="Generate an qr code", usage="<text/url>", aliases=["qr", "qrc"])
+    async def qrcode(self, ctx, *, data):
+        qr = qrcode.QRCode(
+            box_size=20
+        )
+        qr.add_data(data)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format="PNG")
+
+        img_bytes.seek(0)
+        print(img_bytes)
+        await ctx.send(file=discord.File(img_bytes, filename="qr.png"))
 
 
 def similar(a, b):
