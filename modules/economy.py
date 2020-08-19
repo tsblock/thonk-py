@@ -92,7 +92,6 @@ class Economy(commands.Cog, name="Economy"):
             await ctx.send(embed=failed_embed)
 
     @commands.command(name="gamble", description="Pure gambling lol, 50% chance of winning.", usage="<number>")
-    @commands.cooldown(5, 5, commands.BucketType.user)
     async def gamble(self, ctx, amount: int):
         self_document = economy.get(ctx.author.id)
         self_balance = self_document.balance
