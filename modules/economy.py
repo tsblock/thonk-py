@@ -101,8 +101,8 @@ class Economy(commands.Cog, name="Economy"):
         if amount <= 0:
             await ctx.send(embed=funcs.error_embed(None, "What are you doing?"))
             return
-        luck = random.randrange(0, 100)
-        if luck >= 50:
+        luck = random.randrange(0, 2)
+        if luck == 1:
             economy.add(ctx.author.id, -amount)
             current_amount = self_balance - amount
             lost_embed = discord.Embed(
