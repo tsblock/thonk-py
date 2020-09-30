@@ -24,6 +24,10 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send(embed=funcs.error_embed(None,
                                                    "You can not use this command in private message."))
+        elif isinstance(error, commands.MissingPermissions):
+            await ctx.send(embed=funcs.error_embed("Insufficient permission",
+                                                   "Permission(s) required: `{}`".format(
+                                                       ", ".join(error.missing_perms))))
 
 
 def setup(client):

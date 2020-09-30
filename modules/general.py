@@ -87,6 +87,7 @@ class General(commands.Cog, name="General"):
         pass
 
     @commands.command(name="toggle_msg", description="Toggle response messages")
+    @commands.has_permissions(manage_guild=True)
     @commands.guild_only()
     async def toggle_msg(self, ctx):
         guild_setting = guild_settings.get(ctx.guild.id)
