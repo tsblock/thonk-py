@@ -15,7 +15,7 @@ if not config.production:
     prefix = "tb."
 
 # thanks discord
-intents = discord.Intents(messages=True, reactions=True, guilds=True)
+intents = discord.Intents.default()
 client = commands.Bot(command_prefix=prefix, intents=intents)
 client.remove_command("help")
 
