@@ -13,7 +13,7 @@ class Translate(commands.Cog, name="Google Translate"):
 
     @commands.command(name="translate",
                       description="Translate a text to other language"
-                                  "\nSee https://github.com/ssut/py-googletrans/blob/master/googletrans/constants.py \n"
+                                  "\nSee https://gist.github.com/tsblock/6fe5977de3868a5b1fdb3d6e883bf228 \n"
                                   "for language code",
                       aliases=["tr"],
                       usage="<language to translate> <text>",

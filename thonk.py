@@ -16,7 +16,8 @@ if not config.production:
 
 # thanks discord
 intents = discord.Intents.default()
-client = commands.Bot(command_prefix=prefix, intents=intents)
+intents.members = True  # for economy module
+client = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True)
 client.remove_command("help")
 
 
