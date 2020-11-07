@@ -27,12 +27,12 @@ class Connect4(commands.Cog, name="Connect 4"):
         player2 = target_player.id
 
         if target_player.bot:
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "You can't start a game with bots."))
+            await ctx.channel.send(embed=funcs.error_embed(None, "You can't start a game with bots."))
         elif player1 == player2:
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "You can't start a game with yourself..."))
+            await ctx.channel.send(embed=funcs.error_embed(None, "You can't start a game with yourself..."))
         elif ctx.channel.id in self.game_list:
-            await ctx.channel.send(embed=funcs.errorEmbed(None, "This channel still has a Connect 4 game going! "
-                                                                "Please wait until it ends."))
+            await ctx.channel.send(embed=funcs.error_embed(None, "This channel still has a Connect 4 game going! "
+                                                                 "Please wait until it ends."))
         else:
             initial_game_board_embed = discord.Embed(
                 color=discord.Color.blue(),

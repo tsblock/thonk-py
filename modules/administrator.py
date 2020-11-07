@@ -44,12 +44,14 @@ class Administrator(commands.Cog, name="Administrator"):
             'emotes': emotes
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
-        result = (await eval(f"{fn_name}()", env))
+        result = str((await eval(f"{fn_name}()", env)))
         success_embed = discord.Embed(
             title="{}".format(emotes.emotes["tick"]),
             color=discord.Color.green(),
             description="```xl\n{}```".format(result)
         )
+        if len(result) >= 2000:
+            success_embed.description = await funcs.upload_text(str(result))
         await ctx.channel.send(embed=success_embed)
 
     @commands.command(name="exec", description="Execute terminal command")
@@ -57,15 +59,28 @@ class Administrator(commands.Cog, name="Administrator"):
     async def exec(self, ctx, *, cmd):
         await ctx.message.add_reaction(emotes.emotes["loading"])
         cmd_str_array = cmd.split(" ")
-        output = subprocess.check_output(cmd_str_array)
-        output = output.decode("unicode_escape")
-        success_embed = discord.Embed(
-            title="{}".format(emotes.emotes["tick"]),
-            color=discord.Color.green(),
-            description="```xl\n{}```".format(output)
-        )
-        await ctx.message.clear_reaction(emotes.emotes["loading"])
-        await ctx.send(embed=success_embed)
+        try:
+            output = subprocess.check_output(cmd_str_array)
+            output = output.decode("unicode_escape")
+        except subprocess.CalledProcessError as err:
+            output = err.output.decode("unicode_escape")
+            error_embed = discord.Embed(
+                title="{}".format(emotes.emotes["cross"]),
+                color=discord.Color.red(),
+                description="```xl\n{}```".format(output)
+            )
+            await ctx.send(embed=error_embed)
+        else:
+            success_embed = discord.Embed(
+                title="{}".format(emotes.emotes["tick"]),
+                color=discord.Color.green(),
+                description="```xl\n{}```".format(output)
+            )
+            if len(output) >= 2000:
+                success_embed.description = await funcs.upload_text(output)
+            await ctx.send(embed=success_embed)
+        finally:
+            await ctx.message.clear_reaction(emotes.emotes["loading"])
 
     @commands.command(name="say", description="SAY OSMETIHNG")
     @commands.is_owner()
@@ -75,6 +90,10 @@ class Administrator(commands.Cog, name="Administrator"):
     @commands.command(name="hack", description="hack into the nsa so you get FREE MOnEY!!!!")
     @commands.is_owner()
     async def hack(self, ctx, amount: int):
+        if config.production:
+            await ctx.send("cheating in production makes you a furry!!!!!!!!!!!!! "
+                           "and dont you dare cheat with a database viewer")
+            return
         member = ctx.author.id
         economy.add(member, amount)
         await ctx.send("omg you mad lad you hacked yourself some FREE MONEY!!!")
@@ -84,27 +103,27 @@ class Administrator(commands.Cog, name="Administrator"):
     async def reset_eco(self, ctx):
         if config.production:
             await ctx.send("why you are doing this in production")
+            return
+        await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
+        try:
+            await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
+        except asyncio.TimeoutError:
+            await ctx.send("lol pussy")
         else:
-            await ctx.send("are you ducking sure??? say yes (please :)) XDDDDDDDDDDDDD 😂😂😂😂😂😂😂😂😂😂😂")
-            try:
-                await self.client.wait_for("message", check=lambda m: m.content == "yes", timeout=5.0)
-            except asyncio.TimeoutError:
-                await ctx.send("lol pussy")
-            else:
-                for document in economy.EconomyDocument.objects:
-                    document.delete()
-                await ctx.send("Done! :)")
+            for document in economy.EconomyDocument.objects:
+                document.delete()
+            await ctx.send("Done! :)")
 
     @commands.command(name="restart", description="restart the bot")
     @commands.is_owner()
-    async def restart(self, ctx):
-        await ctx.send("✅❓")
+    async def restart(self, ctx, *force):
+        confirm_msg = await ctx.send("✅❓")
         try:
             msg = await self.client.wait_for("message",
                                              check=lambda m: (m.author.id == ctx.author.id and m.content == "yes"),
                                              timeout=5.0)
         except asyncio.TimeoutError:
-            await ctx.message.delete()
+            await confirm_msg.delete()
         else:
             await msg.add_reaction(str(emotes.emotes["loading"]))
             restart_indicator = open("restart_indicator", "w+")

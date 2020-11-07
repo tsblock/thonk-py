@@ -13,7 +13,7 @@ class Translate(commands.Cog, name="Google Translate"):
 
     @commands.command(name="translate",
                       description="Translate a text to other language"
-                                  "\nSee https://github.com/ssut/py-googletrans/blob/master/googletrans/constants.py \n"
+                                  "\nSee https://gist.github.com/tsblock/6fe5977de3868a5b1fdb3d6e883bf228 \n"
                                   "for language code",
                       aliases=["tr"],
                       usage="<language to translate> <text>",
@@ -21,9 +21,9 @@ class Translate(commands.Cog, name="Google Translate"):
     @commands.cooldown(1, 10)
     async def translate(self, ctx, dest=None, *, msg=None):
         if dest not in constants.LANGUAGES.keys():
-            await ctx.send(embed=funcs.errorEmbed(None, "Invalid language code! Please check "
-                                                  "https://github.com/ssut/py-googletrans/blob/master/googletrans"
-                                                  "/constants.py for the list of valid language code."))
+            await ctx.send(embed=funcs.error_embed(None, "Invalid language code! Please check "
+                                                         "[this page](https://gist.github.com/tsblock/6fe5977de3868a5b1fdb3d6e883bf228)"
+                                                         " for the list of valid language code."))
         else:
             await ctx.trigger_typing()
             res = self.translator.translate(msg, dest=dest)
@@ -42,6 +42,9 @@ class Translate(commands.Cog, name="Google Translate"):
     async def literal_chinese(self, ctx, *, msg):
         msg_list = list(msg)
         res = ""
+        if len(res) > 50:
+            await ctx.send(funcs.error_embed(None, "Inputs are too long!"))
+            return
         await ctx.trigger_typing()
         translated_text_list = self.translator.translate(msg_list, dest="en")
         for translated_text in translated_text_list:

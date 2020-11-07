@@ -14,7 +14,10 @@ prefix = "t."
 if not config.production:
     prefix = "tb."
 
-client = commands.Bot(command_prefix=prefix)
+# thanks discord
+intents = discord.Intents.default()
+intents.members = True  # for economy module
+client = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True)
 client.remove_command("help")
 
 
@@ -34,18 +37,16 @@ async def read_restart_indicator():
         os.remove("restart_indicator")
         channel_id, msg_id = content.split(":")
 
+        # react tick to message
         channel = await client.fetch_channel(channel_id)
         msg = await channel.fetch_message(msg_id)
         await msg.clear_reaction(emotes["loading"])
         await msg.add_reaction(emotes["tick"])
 
 
-for file in os.listdir("./category"):
+for file in os.listdir("modules"):
     if file.endswith(".py"):
-        client.load_extension(f"category.{file[:-3]}")
+        client.load_extension(f"modules.{file[:-3]}")
 
-for file in os.listdir("./mods"):
-    if file.endswith(".py"):
-        client.load_extension(f"mods.{file[:-3]}")
 
 client.run(config.token)
