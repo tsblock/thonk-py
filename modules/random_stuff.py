@@ -67,7 +67,7 @@ class RandomStuff(commands.Cog, name="Random stuff"):
     @commands.command(name="16craft", description="Get status of 16craft", aliases=["16"])
     async def sixteen_craft(self, ctx):
         await ctx.channel.trigger_typing()
-        server = MinecraftServer.lookup("16craft.serveminecraft.net:25565")
+        server = MinecraftServer.lookup("mc.pastelcraft.me:25565")
         try:
             status = server.status()
         except Exception:
