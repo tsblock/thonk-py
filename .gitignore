@@ -4,3 +4,4 @@ geckodriver.log
 .idea/
 */__pycache__
 restart_indicator
+umongo-rewrite-venv/
