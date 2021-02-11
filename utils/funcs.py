@@ -18,9 +18,9 @@ def error_embed(error_title, message):
     return embed
 
 
-async def simple_get_request(url):
+async def simple_get_request(url, params=None):
     async with httpx.AsyncClient() as client:
-        r = await client.get(url)
+        r = await client.get(url, params=params)
     return r.json()
 
 

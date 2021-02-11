@@ -1,6 +1,6 @@
 discord.py==1.5.0
 googletrans==3.0.0
-httpx==0.13.3
+httpx==0.16.1
 parsedatetime==2.6
 youtube-dl==2020.6.16.1
 youtube-search==1.1.0
