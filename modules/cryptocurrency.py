@@ -40,10 +40,10 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
             market_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/markets",
                                                          params={"vs_currency": fiat_currency, "ids": id,
                                                                  "price_change_percentage": "1h,24h,7d,1y"})
+            market_info = market_info[0]  # the api returns an array so only get the first result
             if market_info.get("error", None):  # detect invalid vs_currency
                 await ctx.send(embed=funcs.error_embed(None, "Invalid currency."))
                 return
-            market_info = market_info[0]  # the api returns an array so only get the first result
             fiat_currency = fiat_currency.upper()
 
             name = market_info["name"]
