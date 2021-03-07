@@ -8,6 +8,7 @@ from discord.ext import commands
 from utils import funcs
 
 coingecko_api_base_url = "https://api.coingecko.com/api/v3/"
+coin360_heatmap_api_url = "https://coin360.com/api/share?width=1920&height=1080&path=/&search=getScreen%26zoom%3D%7B%22x%22%3A0%2C%22y%22%3A0%2C%22k%22%3A1%7D"
 
 
 def get_ticker_to_coin_id():  # converts ticker to coingecko's id because their api are weird
@@ -30,18 +31,19 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
 
     @commands.cooldown(1, 5, commands.BucketType.default)
     @commands.command(name="coin_price", description="Get the current price of a cryptocurrency.", aliases=["cp"],
-                      usage="<coin ticker> [fiat currency]")
+                      usage="<coin ticker> [to currency]")
     async def coin_price(self, ctx, ticker: str = "btc", fiat_currency: typing.Optional[str] = "usd"):
         id = tickers.get(ticker.casefold(), None)
         fiat_currency = fiat_currency.casefold()
         if id:
+            await ctx.trigger_typing()
             market_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/markets",
                                                          params={"vs_currency": fiat_currency, "ids": id,
                                                                  "price_change_percentage": "1h,24h,7d,1y"})
-            market_info = market_info[0]
-            if market_info.get("error", None):
-                await ctx.send(embed=funcs.error_embed(None, "Invalid fiat currency"))
+            if market_info.get("error", None):  # detect invalid vs_currency
+                await ctx.send(embed=funcs.error_embed(None, "Invalid currency."))
                 return
+            market_info = market_info[0]  # the api returns an array so only get the first result
             fiat_currency = fiat_currency.upper()
 
             name = market_info["name"]
@@ -77,6 +79,21 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
             await ctx.send(embed=market_info_embed)
         else:
             await ctx.send(embed=funcs.error_embed("Invalid coin ticker!", "Be sure to use the ticker. (e.g. `btc`)"))
+
+    # doesnt work for now
+    # @commands.cooldown(1, 30, commands.BucketType.default)
+    # @commands.command(name="coin_price_heatmap", description="Shows the heatmap of cryptocurrencies prices.",
+    #                   aliases=["cphmap", "cphm"])
+    # async def coin_price_heatmap(self, ctx):
+    #     try:
+    #         await ctx.trigger_typing()
+    #         res = await funcs.simple_get_request(coin360_heatmap_api_url)
+    #         print(res)
+    #         image_url = "https://coin360.com/shareimg/{}".format(res["url"])
+    #         image = await funcs.get_image_from_url(image_url)
+    #         await ctx.send(file=image)
+    #     except Exception as e:
+    #         print(e)
 
 
 def bull_or_bear(percentage):
