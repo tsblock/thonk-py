@@ -43,7 +43,7 @@ async def read_restart_indicator():
         await msg.clear_reaction(emotes["loading"])
         await msg.add_reaction(emotes["tick"])
 
-
+# load modules
 for file in os.listdir("modules"):
     if file.endswith(".py"):
         client.load_extension(f"modules.{file[:-3]}")

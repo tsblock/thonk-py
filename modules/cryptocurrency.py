@@ -5,10 +5,14 @@ import discord
 import httpx
 from discord.ext import commands
 
+import config
 from utils import funcs
 
 coingecko_api_base_url = "https://api.coingecko.com/api/v3/"
 coin360_heatmap_api_url = "https://coin360.com/api/share?width=1920&height=1080&path=/&search=getScreen%26zoom%3D%7B%22x%22%3A0%2C%22y%22%3A0%2C%22k%22%3A1%7D"
+mempool_space_api_url = "https://mempool.space/api/v1/"
+ethgasstation_api_url = "https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json?api-key={}".format(
+    config.ethgasstation_key)
 
 
 def get_ticker_to_coin_id():  # converts ticker to coingecko's id because their api are weird
@@ -94,6 +98,27 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
     #         await ctx.send(file=image)
     #     except Exception as e:
     #         print(e)
+
+    @commands.command(name="btcfees", description="Shows the recommended fees for Bitcoin transactions", aliases=["bf"])
+    async def btcfees(self, ctx):
+        fees = await funcs.simple_get_request(mempool_space_api_url + "/fees/recommended")
+        fees_embed = discord.Embed(title="Bitcoin transactions fees", color=0xf7931a)
+        fees_embed.add_field(name="High priority", value="`{} sats/vB`".format(fees["fastestFee"]))
+        fees_embed.add_field(name="Medium priority", value="`{} sats/vB`".format(fees["halfHourFee"]))
+        fees_embed.add_field(name="Low priority", value="`{} sats/vB`".format(fees["hourFee"]))
+        fees_embed.add_field(name="Minimum", value="`{} sats/vB`".format(fees["minimumFee"]))
+        await ctx.send(embed=fees_embed)
+
+    @commands.command(name="ethgas", description="Shows the recommended gas fees for Ethereum transactions",
+                      aliases=["eg"])
+    async def ethgas(self, ctx):
+        fees = await funcs.simple_get_request(ethgasstation_api_url)
+        fees_embed = discord.Embed(title="Ethereum gas fees")
+        fees_embed.add_field(name="Fastest", value="`{} gwei`".format(fees["fastest"] / 10))
+        fees_embed.add_field(name="Fast (< 2m)", value="`{} gwei`".format(fees["fast"] / 10))
+        fees_embed.add_field(name="Standard (< 5m)", value="`{} gwei`".format(fees["average"] / 10))
+        await ctx.send(embed=fees_embed)
+        pass
 
 
 def bull_or_bear(percentage):
