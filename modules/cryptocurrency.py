@@ -103,9 +103,9 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
     async def btcfees(self, ctx):
         fees = await funcs.simple_get_request(mempool_space_api_url + "/fees/recommended")
         fees_embed = discord.Embed(title="Bitcoin transactions fees", color=0xf7931a)
-        fees_embed.add_field(name="High priority", value="`{} sats/vB`".format(fees["fastestFee"]))
-        fees_embed.add_field(name="Medium priority", value="`{} sats/vB`".format(fees["halfHourFee"]))
-        fees_embed.add_field(name="Low priority", value="`{} sats/vB`".format(fees["hourFee"]))
+        fees_embed.add_field(name="High priority (~10m)", value="`{} sats/vB`".format(fees["fastestFee"]))
+        fees_embed.add_field(name="Medium priority (~3h)", value="`{} sats/vB`".format(fees["halfHourFee"]))
+        fees_embed.add_field(name="Low priority (~1d)", value="`{} sats/vB`".format(fees["hourFee"]))
         fees_embed.add_field(name="Minimum", value="`{} sats/vB`".format(fees["minimumFee"]))
         await ctx.send(embed=fees_embed)
 
