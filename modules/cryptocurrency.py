@@ -30,6 +30,7 @@ def get_ticker_to_coin_id():  # converts ticker to coingecko's id because their 
 
 
 tickers = get_ticker_to_coin_id()
+vs_currency_list = httpx.get(coingecko_api_base_url + "simple/supported_vs_currencies").json()
 
 
 class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
@@ -42,16 +43,12 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
     async def coin_price(self, ctx, ticker: str = "btc", fiat_currency: typing.Optional[str] = "usd"):
         id = tickers.get(ticker.casefold(), None)
         fiat_currency = fiat_currency.casefold()
-        if id:
+        if id and fiat_currency in vs_currency_list:
             await ctx.trigger_typing()
             market_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/markets",
                                                          params={"vs_currency": fiat_currency, "ids": id,
                                                                  "price_change_percentage": "1h,24h,7d,1y"})
             market_info = market_info[0]  # the api returns an array so only get the first result
-            if market_info.get("error", None):  # detect invalid vs_currency
-                await ctx.send(embed=funcs.error_embed(None, "Invalid currency."))
-                return
-            fiat_currency = fiat_currency.upper()
 
             name = market_info["name"]
             thumbnail = market_info["image"]
@@ -85,10 +82,11 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
 
             await ctx.send(embed=market_info_embed)
         else:
-            await ctx.send(embed=funcs.error_embed("Invalid coin ticker!", "Be sure to use the ticker. (e.g. `btc`)"))
+            await ctx.send(embed=funcs.error_embed("Invalid argument(s) and/or invalid currency!",
+                                                   "Be sure to use the ticker. (e.g. `btc`)"))
 
     @commands.command(name="coin_chart", description="Get a cryptocurrency price chart",
-                      usage="<coin ticker> [option 1, option 2, option 3...]\n"
+                      usage="<coin ticker> [vs_currency] [option 1, option 2, option 3...]\n"
                             "Available intervals: d, w, m, y\n"
                             "Available options: ma, line", aliases=["cc"])
     async def coinchart(self, ctx, ticker, *options):
@@ -96,6 +94,7 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
         days = "1"
         mav = None
         chart_type = "candle"
+        vs_currency = "usd"
         for option in options:
             option = option.casefold()
             if option == "d":
@@ -110,10 +109,12 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
                 mav = (3, 7, 25)
             elif option == "line":
                 chart_type = "line"
+            elif option in vs_currency_list:
+                vs_currency = option
         if id:
             await ctx.trigger_typing()
             ohlc_data = await funcs.simple_get_request(coingecko_api_base_url + "coins/{}/ohlc".format(id),
-                                                       params={"vs_currency": "usd", "days": days})
+                                                       params={"vs_currency": vs_currency, "days": days})
             coin_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/{}".format(id))
             df = DataFrame(
                 [date[1:] for date in ohlc_data],
@@ -125,10 +126,10 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
             style = mpf.make_mpf_style(base_mpf_style="nightclouds", marketcolors=mc)
             # hacky hack hack
             if mav:
-                mpf.plot(df, type=chart_type, style=style, ylabel="Price (USD)",
+                mpf.plot(df, type=chart_type, style=style, ylabel="Price ({})".format(vs_currency.upper()),
                          title="{}d Chart ({})".format(days, coin_info["name"]), mav=mav, savefig=buffer)
             else:
-                mpf.plot(df, type=chart_type, style=style, ylabel="Price (USD)",
+                mpf.plot(df, type=chart_type, style=style, ylabel="Price ({})".format(vs_currency.upper()),
                          title="{}d Chart ({})".format(days, coin_info["name"]), savefig=buffer)
             buffer.seek(0)
             await ctx.send(file=discord.File(fp=buffer, filename="chart.png"))
