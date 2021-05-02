@@ -1,9 +1,12 @@
+import io
 import typing
 from datetime import datetime
 
 import discord
 import httpx
+import mplfinance as mpf
 from discord.ext import commands
+from pandas import DataFrame, DatetimeIndex
 
 import config
 from utils import funcs
@@ -81,6 +84,54 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
             market_info_embed.timestamp = datetime.strptime(last_updated, "%Y-%m-%dT%H:%M:%S.%fZ")
 
             await ctx.send(embed=market_info_embed)
+        else:
+            await ctx.send(embed=funcs.error_embed("Invalid coin ticker!", "Be sure to use the ticker. (e.g. `btc`)"))
+
+    @commands.command(name="coin_chart", description="Get a cryptocurrency price chart",
+                      usage="<coin ticker> [option 1, option 2, option 3...]\n"
+                            "Available intervals: d, w, m, y\n"
+                            "Available options: ma, line", aliases=["cc"])
+    async def coinchart(self, ctx, ticker, *options):
+        id = tickers.get(ticker.casefold(), None)
+        days = "1"
+        mav = None
+        chart_type = "candle"
+        for option in options:
+            option = option.casefold()
+            if option == "d":
+                days = "1"
+            elif option == "w":
+                days = "7"
+            elif option == "m":
+                days = "30"
+            elif option == "y":
+                days = "365"
+            elif option == "ma":
+                mav = (3, 7, 25)
+            elif option == "line":
+                chart_type = "line"
+        if id:
+            await ctx.trigger_typing()
+            ohlc_data = await funcs.simple_get_request(coingecko_api_base_url + "coins/{}/ohlc".format(id),
+                                                       params={"vs_currency": "usd", "days": days})
+            coin_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/{}".format(id))
+            df = DataFrame(
+                [date[1:] for date in ohlc_data],
+                index=DatetimeIndex([datetime.utcfromtimestamp(date[0] / 1000) for date in ohlc_data]),
+                columns=["Open", "High", "Low", "Close"]
+            )
+            buffer = io.BytesIO()
+            mc = mpf.make_marketcolors(base_mpf_style="binance", inherit=True)
+            style = mpf.make_mpf_style(base_mpf_style="nightclouds", marketcolors=mc)
+            # hacky hack hack
+            if mav:
+                mpf.plot(df, type=chart_type, style=style, ylabel="Price (USD)",
+                         title="{}d Chart ({})".format(days, coin_info["name"]), mav=mav, savefig=buffer)
+            else:
+                mpf.plot(df, type=chart_type, style=style, ylabel="Price (USD)",
+                         title="{}d Chart ({})".format(days, coin_info["name"]), savefig=buffer)
+            buffer.seek(0)
+            await ctx.send(file=discord.File(fp=buffer, filename="chart.png"))
         else:
             await ctx.send(embed=funcs.error_embed("Invalid coin ticker!", "Be sure to use the ticker. (e.g. `btc`)"))
 
