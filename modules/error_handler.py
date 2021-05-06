@@ -12,15 +12,15 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.channel.send(
                 embed=funcs.error_embed("Hey! Calm down.",
-                                        "Try again in {} seconds".format(round(error.retry_after, 2))))
+                                        "Try again in `{}` seconds".format(round(error.retry_after, 2))))
         elif isinstance(error, commands.NotOwner):
             await ctx.channel.send(
                 embed=funcs.error_embed("Insufficient permission", "Only bot owner can use this command."))
         elif isinstance(error, commands.UserInputError):
             await ctx.send(embed=funcs.error_embed("Invalid arguments!",
-                                                   "Correct usage: {}{} {}".format(self.client.command_prefix,
-                                                                                   ctx.command.name,
-                                                                                   ctx.command.usage)))
+                                                   "Correct usage: `{}{} {}`".format(self.client.command_prefix,
+                                                                                     ctx.command.name,
+                                                                                     ctx.command.usage)))
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send(embed=funcs.error_embed(None,
                                                    "You can not use this command in private message."))

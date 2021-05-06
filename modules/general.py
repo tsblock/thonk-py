@@ -52,9 +52,7 @@ class General(commands.Cog, name="General"):
                 if usage is not None:
                     cmd_embed.add_field(name="Usage", value="```t.{} {}```".format(name, usage))
                 if len(aliases) != 0:
-                    alias_text = ""
-                    for alias in aliases:
-                        alias_text += alias + ", "
+                    alias_text = ", ".join(aliases)
                     cmd_embed.add_field(name="Aliases", value="```{}```".format(alias_text))
                 await ctx.channel.send(embed=cmd_embed)
 

@@ -1,4 +1,5 @@
 import io
+import random
 import typing
 from datetime import datetime
 
@@ -37,7 +38,7 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
     def __init__(self, client):
         self.client = client
 
-    @commands.cooldown(1, 5, commands.BucketType.default)
+    @commands.cooldown(2, 10, commands.BucketType.default)
     @commands.command(name="coin_price", description="Get the current price of a cryptocurrency.", aliases=["cp"],
                       usage="<coin ticker> [to currency]")
     async def coin_price(self, ctx, ticker: str = "btc", fiat_currency: typing.Optional[str] = "usd"):
@@ -85,6 +86,7 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
             await ctx.send(embed=funcs.error_embed("Invalid argument(s) and/or invalid currency!",
                                                    "Be sure to use the ticker. (e.g. `btc`)"))
 
+    @commands.cooldown(2, 10)
     @commands.command(name="coin_chart", description="Get a cryptocurrency price chart",
                       usage="<coin ticker> [vs_currency] [option 1, option 2, option 3...]\n"
                             "Available intervals: d, w, m, y\n"
@@ -151,6 +153,7 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
     #     except Exception as e:
     #         print(e)
 
+    @commands.cooldown(1, 10)
     @commands.command(name="btcfees", description="Shows the recommended fees for Bitcoin transactions", aliases=["bf"])
     async def btcfees(self, ctx):
         fees = await funcs.simple_get_request(mempool_space_api_url + "/fees/recommended")
@@ -161,6 +164,7 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
         fees_embed.add_field(name="Minimum", value="`{} sats/vB`".format(fees["minimumFee"]))
         await ctx.send(embed=fees_embed)
 
+    @commands.cooldown(1, 10)
     @commands.command(name="ethgas", description="Shows the recommended gas fees for Ethereum transactions",
                       aliases=["eg"])
     async def ethgas(self, ctx):
@@ -171,6 +175,28 @@ class CryptoCurrency(commands.Cog, name="Cryptocurrency"):
         fees_embed.add_field(name="Standard (< 5m)", value="`{} gwei`".format(fees["average"] / 10))
         await ctx.send(embed=fees_embed)
         pass
+
+    @commands.cooldown(1, 5)
+    @commands.command("random_coin",
+                      description="Do you have no idea which coin you should invest in? Well you are in luck! "
+                                  "This command will randomly select a (or multiple) top 200 coin(s) "
+                                  "to help you decide invest in which coin. "
+                                  "(not financial advise blah blah blah)",
+                      aliases=["rc"], usage="[number of random coins (maximum is 100)]")
+    async def random_coin(self, ctx, n=1):
+        await ctx.trigger_typing()
+        if n <= 0:
+            raise commands.BadArgument
+        elif n >= 101:
+            await ctx.send(embed=funcs.error_embed("number too big", "no more than 100 suck"))
+        market_info = await funcs.simple_get_request(coingecko_api_base_url + "coins/markets",
+                                                     params={"vs_currency": "usd"})
+        best_coin_list = random.sample(market_info, n)
+        coin_list = []
+        for best_coin in best_coin_list:
+            coin_list.append("{} ({})".format(best_coin["name"], best_coin["symbol"].upper()))
+        coin_list_str = ", ".join(coin_list)
+        await ctx.send("You should probably invest in:\n```{}```\n`(not financial advise!!111)`".format(coin_list_str))
 
 
 def bull_or_bear(percentage):
