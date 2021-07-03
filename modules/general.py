@@ -76,7 +76,7 @@ class General(commands.Cog, name="General"):
             color=discord.Color.from_rgb(255, 255, 0)
         )
         info_embed.set_author(name="Thonk", icon_url=self.client.user.avatar_url)
-        info_embed.add_field(name="Creator", value="`TheSimpleBlock#0534`")
+        info_embed.add_field(name="Creator", value="`tsb#0534`")
         info_embed.add_field(name="Discord.py version", value="`{}`".format(discord.__version__))
         info_embed.add_field(name="Creation date", value="`2018 August 17`")
         info_embed.add_field(name="Guilds", value="`{}`".format(str(len(self.client.guilds))))
