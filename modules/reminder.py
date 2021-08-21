@@ -70,8 +70,7 @@ class Reminder(commands.Cog):
         )
         await ctx.send(embed=success_embed)
 
-    # FIXME this loop sometimes stops working for no reason
-    @tasks.loop(seconds=10.0)
+    @tasks.loop(seconds=5.0)
     async def reminder_loop(self):
         documents = reminder.RemindListDocument.objects()
         for document in documents:
@@ -91,8 +90,14 @@ class Reminder(commands.Cog):
                     await user.send(embed=remind_embed)
                     reminder.remove(user_id, document.reminds.index(remind))
 
+    # if theres error restart the loop
+    # not the best way to handle the bug, but it works
+    @reminder_loop.error
+    async def reminder_loop_error_handler(self):
+        self.reminder_loop.restart()
+
     @reminder_loop.before_loop
-    async def before_loop(self):
+    async def reminder_loop_before_loop(self):
         await self.client.wait_until_ready()
 
 
