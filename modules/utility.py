@@ -157,6 +157,45 @@ class Utility(commands.Cog, name="Utility"):
         print(img_bytes)
         await ctx.send(file=discord.File(img_bytes, filename="qr.png"))
 
+    @commands.cooldown(1, 20, commands.BucketType.channel)
+    @commands.command(name="wolfram_alpha", description="Get result from Wolfram Alpha.", usage="<query>",
+                      aliases=["wolf"])
+    async def wolf(self, ctx, *, query):
+        await ctx.trigger_typing()
+        request_params = {
+            "output": "json",
+            "appid": config.wolfram_alpha_app_id,
+            "lang": "en",
+            "input": query
+        }
+        result = await funcs.simple_get_request("https://api.wolframalpha.com/v2/query", params=request_params)
+        # get pods (result)
+        pods = []
+        for pod in result["queryresult"]["pods"]:
+            img = []
+            img.append(pod["title"])
+            for subpod in pod["subpods"]:
+                img.append(subpod["img"]["src"])
+            pods.append(img)
+        embeds = []
+        for pod in pods:
+            title = pod[0]
+            imgs = pod[1:]
+            embed = discord.Embed(title=title, color=discord.Color.blurple())
+            embed.set_image(url=imgs[0])  # get the first image link for now
+            embeds.append(embed)
+            # what in the fuck
+            if len(imgs) > 1:
+                extra_imgs = imgs[1:]
+                for extra_img in extra_imgs:
+                    extra_embed = discord.Embed(title=title, color=discord.Color.blurple())
+                    extra_embed.set_image(url=extra_img)
+                    embeds.append(extra_embed)
+        for embed in embeds:
+            await ctx.send(embed=embed)
+            await asyncio.sleep(0.5)
+        pass
+
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
