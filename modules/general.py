@@ -1,3 +1,4 @@
+import subprocess
 import time
 
 import discord
@@ -11,6 +12,9 @@ from utils.emotes import emotes
 class General(commands.Cog, name="General"):
     def __init__(self, client):
         self.client = client
+        version_output = subprocess.check_output("git rev-parse --short HEAD")
+        version_output = version_output.decode("unicode_escape")
+        self.version = version_output
 
     @commands.command(name="ping",
                       description="ping", aliases=["p"])
@@ -75,8 +79,10 @@ class General(commands.Cog, name="General"):
             description="The worst bot ever made.",
             color=discord.Color.from_rgb(255, 255, 0)
         )
+
         info_embed.set_author(name="Thonk", icon_url=self.client.user.avatar_url)
         info_embed.add_field(name="Creator", value="`tsb#0534`")
+        info_embed.add_field(name="Version", value="`{}`".format(self.version))
         info_embed.add_field(name="Discord.py version", value="`{}`".format(discord.__version__))
         info_embed.add_field(name="Creation date", value="`2018 August 17`")
         info_embed.add_field(name="Guilds", value="`{}`".format(str(len(self.client.guilds))))
