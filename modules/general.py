@@ -77,7 +77,7 @@ class General(commands.Cog, name="General"):
         )
         info_embed.set_author(name="Thonk", icon_url=self.client.user.avatar_url)
         info_embed.add_field(name="Creator", value="`tsb#0534`")
-        info_embed.add_field(name="Discord.py version", value="`{}`".format(discord.__version__))
+        info_embed.add_field(name="Pycord version", value="`{}`".format(discord.__version__))
         info_embed.add_field(name="Creation date", value="`2018 August 17`")
         info_embed.add_field(name="Guilds", value="`{}`".format(str(len(self.client.guilds))))
         info_embed.add_field(name="Users", value="`{}`".format(str(len(self.client.users))))
