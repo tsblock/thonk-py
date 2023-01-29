@@ -197,6 +197,7 @@ class Utility(commands.Cog, name="Utility"):
         pass
 
 
+
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
