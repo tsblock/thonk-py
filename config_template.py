@@ -4,3 +4,6 @@ production = False
 pasteee_key = ""
 openweather_key = ""
 rapidapi_key = ""
+ethgasstation_key = ""
+wolfram_alpha_app_id = ""
+cooldown_whitelist = []
